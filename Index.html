@@ -28,7 +28,1657 @@
         body.light-mode .container {
             background: #ffffff;
             box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-        }
+        }<!DOCTYPE html>
+<html lang="ro">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>VAULT — Password Manager</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --black:    #0a0a0c;
+    --surface:  #111116;
+    --panel:    #17171e;
+    --border:   #2a2a35;
+    --border2:  #3a3a48;
+    --gold:     #c9a84c;
+    --gold2:    #e8c96d;
+    --gold-dim: #c9a84c22;
+    --red:      #e05252;
+    --red-dim:  #e0525218;
+    --green:    #4caf82;
+    --green-dim:#4caf8218;
+    --text:     #e8e8f0;
+    --muted:    #7a7a90;
+    --mono: 'DM Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { font-size: 16px; }
+
+  body {
+    font-family: var(--sans);
+    background: var(--black);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 24px 16px 48px;
+    background-image:
+      radial-gradient(ellipse 80% 40% at 50% -10%, #c9a84c0a 0%, transparent 70%),
+      repeating-linear-gradient(0deg, transparent, transparent 39px, #ffffff04 39px, #ffffff04 40px),
+      repeating-linear-gradient(90deg, transparent, transparent 39px, #ffffff04 39px, #ffffff04 40px);
+  }
+
+  /* ── WORDMARK ── */
+  .wordmark {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 32px;
+    animation: fadeDown 0.6s ease both;
+  }
+  .wordmark-icon {
+    width: 40px; height: 40px;
+    border: 2px solid var(--gold);
+    border-radius: 10px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    position: relative;
+    box-shadow: 0 0 20px #c9a84c30;
+  }
+  .wordmark-text {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    letter-spacing: 0.3em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* ── SHELL ── */
+  .shell {
+    width: 100%; max-width: 540px;
+    animation: fadeUp 0.5s ease both 0.1s;
+  }
+
+  /* ── CARD ── */
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 28px;
+    margin-bottom: 16px;
+    position: relative;
+    overflow: hidden;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.4;
+  }
+
+  /* ── SECTION LABEL ── */
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .section-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ── FORM ── */
+  .field { margin-bottom: 16px; }
+  .field label {
+    display: block;
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .input-wrap { position: relative; }
+  .input-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    font-family: var(--sans);
+    font-size: 0.95rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .input-wrap input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px #c9a84c18;
+  }
+  .input-wrap input::placeholder { color: var(--muted); }
+  .input-wrap .eye-btn {
+    position: absolute;
+    right: 12px; top: 50%;
+    transform: translateY(-50%);
+    background: none; border: none;
+    color: var(--muted); cursor: pointer;
+    font-size: 16px; padding: 4px;
+    transition: color 0.2s;
+    width: auto; margin: 0;
+  }
+  .input-wrap .eye-btn:hover { color: var(--gold); }
+  .input-wrap input.has-icon { padding-right: 44px; }
+
+  /* PIN dots */
+  .pin-display {
+    display: flex; gap: 10px; justify-content: center;
+    margin: 20px 0;
+  }
+  .pin-dot {
+    width: 14px; height: 14px;
+    border-radius: 50%;
+    border: 2px solid var(--border2);
+    background: transparent;
+    transition: all 0.15s ease;
+  }
+  .pin-dot.filled {
+    border-color: var(--gold);
+    background: var(--gold);
+    box-shadow: 0 0 8px #c9a84c80;
+  }
+  .pin-dot.error {
+    border-color: var(--red);
+    background: var(--red);
+    animation: shake 0.4s ease;
+  }
+
+  /* ── BUTTONS ── */
+  .btn {
+    width: 100%;
+    padding: 13px 20px;
+    border: none; border-radius: 12px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    display: flex; align-items: center; justify-content: center;
+    gap: 8px;
+    letter-spacing: 0.02em;
+  }
+  .btn-primary {
+    background: var(--gold);
+    color: #0a0a0c;
+  }
+  .btn-primary:hover { background: var(--gold2); transform: translateY(-1px); box-shadow: 0 4px 20px #c9a84c40; }
+  .btn-primary:active { transform: translateY(0); }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--muted);
+    border: 1px solid var(--border);
+  }
+  .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
+
+  .btn-danger {
+    background: var(--red-dim);
+    color: var(--red);
+    border: 1px solid #e0525230;
+  }
+  .btn-danger:hover { background: #e0525228; }
+
+  .btn-sm {
+    padding: 8px 14px;
+    font-size: 0.8rem;
+    border-radius: 8px;
+    width: auto;
+  }
+
+  .btn-icon {
+    width: 36px; height: 36px;
+    padding: 0;
+    border-radius: 9px;
+    font-size: 15px;
+  }
+
+  /* ── TOP BAR ── */
+  .topbar {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 20px;
+    gap: 12px;
+  }
+  .topbar-title {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+  .topbar-actions { display: flex; gap: 8px; }
+
+  /* ── SEARCH ── */
+  .search-wrap {
+    position: relative;
+    margin-bottom: 16px;
+  }
+  .search-wrap .search-icon {
+    position: absolute;
+    left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    font-size: 14px;
+    pointer-events: none;
+  }
+  .search-wrap input {
+    width: 100%;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 11px 16px 11px 40px;
+    font-family: var(--sans);
+    font-size: 0.9rem;
+    color: var(--text);
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+  .search-wrap input:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px #c9a84c15;
+  }
+  .search-wrap input::placeholder { color: var(--muted); }
+
+  /* ── ENTRY LIST ── */
+  #entriesList { display: flex; flex-direction: column; gap: 8px; }
+
+  .entry-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 14px 16px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: border-color 0.2s, background 0.2s;
+    animation: fadeUp 0.3s ease both;
+  }
+  .entry-card:hover { border-color: var(--border2); background: #1a1a22; }
+
+  .entry-avatar {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--gold-dim);
+    border: 1px solid #c9a84c30;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+    font-family: var(--mono);
+    font-weight: 500;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .entry-info { flex: 1; min-width: 0; }
+  .entry-site {
+    font-weight: 600;
+    font-size: 0.95rem;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .entry-email {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    color: var(--muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    margin-top: 2px;
+  }
+
+  .entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
+
+  /* ── STRENGTH BAR ── */
+  .strength-wrap { margin-top: 8px; }
+  .strength-bar {
+    height: 3px; border-radius: 2px;
+    background: var(--border);
+    overflow: hidden;
+  }
+  .strength-fill {
+    height: 100%; border-radius: 2px;
+    transition: width 0.3s ease, background 0.3s ease;
+  }
+  .strength-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    margin-top: 5px;
+    color: var(--muted);
+  }
+
+  /* ── MODAL ── */
+  .overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.85);
+    backdrop-filter: blur(4px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000;
+    padding: 16px;
+    animation: fadeIn 0.15s ease;
+  }
+  .modal {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 24px;
+    padding: 28px;
+    width: 100%; max-width: 440px;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideUp 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    position: relative;
+  }
+  .modal::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    opacity: 0.5;
+  }
+  .modal-title {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 20px;
+  }
+
+  /* ── PASSWORD REVEAL ── */
+  .reveal-box {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    margin: 16px 0;
+  }
+  .reveal-site {
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 8px;
+    font-family: var(--mono);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+  .reveal-password {
+    font-family: var(--mono);
+    font-size: 1.1rem;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    word-break: break-all;
+    line-height: 1.5;
+    user-select: all;
+  }
+
+  /* ── TOAST ── */
+  #toast {
+    position: fixed;
+    bottom: 28px; left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 40px;
+    padding: 12px 22px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--green);
+    letter-spacing: 0.05em;
+    white-space: nowrap;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    z-index: 9999;
+    pointer-events: none;
+  }
+  #toast.show { transform: translateX(-50%) translateY(0); }
+
+  /* ── BADGE ── */
+  .badge {
+    display: inline-flex; align-items: center;
+    background: var(--gold-dim);
+    color: var(--gold);
+    border: 1px solid #c9a84c30;
+    border-radius: 6px;
+    padding: 2px 8px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.05em;
+  }
+
+  /* ── LOCKED SCREEN ── */
+  .lock-visual {
+    text-align: center;
+    padding: 20px 0 10px;
+  }
+  .lock-icon {
+    font-size: 3rem;
+    margin-bottom: 12px;
+    display: block;
+    filter: drop-shadow(0 0 12px #c9a84c50);
+  }
+  .lock-title {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .lock-subtitle {
+    font-size: 0.85rem;
+    color: var(--muted);
+  }
+
+  /* ── TIMER ── */
+  .timer-display {
+    font-family: var(--mono);
+    font-size: 2rem;
+    color: var(--red);
+    text-align: center;
+    letter-spacing: 0.1em;
+    margin: 16px 0;
+  }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(30px) scale(0.97); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+  }
+  @keyframes shake {
+    0%,100% { transform: translateX(0); }
+    20% { transform: translateX(-6px); }
+    40% { transform: translateX(6px); }
+    60% { transform: translateX(-4px); }
+    80% { transform: translateX(4px); }
+  }
+  @keyframes pulse {
+    0%,100% { opacity: 1; }
+    50% { opacity: 0.5; }
+  }
+
+  .pulse { animation: pulse 1.5s ease infinite; }
+
+  /* ── SETTINGS ROWS ── */
+  .setting-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+    gap: 16px;
+  }
+  .setting-row:last-child { border-bottom: none; }
+  .setting-row-info { flex: 1; }
+  .setting-row-label {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .setting-row-desc {
+    font-size: 0.75rem;
+    color: var(--muted);
+    margin-top: 2px;
+  }
+
+  /* toggle */
+  .toggle {
+    width: 44px; height: 24px;
+    background: var(--border2);
+    border-radius: 12px;
+    position: relative;
+    cursor: pointer;
+    flex-shrink: 0;
+    border: none;
+    transition: background 0.2s;
+  }
+  .toggle::after {
+    content: '';
+    position: absolute;
+    width: 18px; height: 18px;
+    background: var(--muted);
+    border-radius: 50%;
+    top: 3px; left: 3px;
+    transition: transform 0.2s, background 0.2s;
+  }
+  .toggle.on { background: #c9a84c30; }
+  .toggle.on::after { transform: translateX(20px); background: var(--gold); }
+
+  .select-mini {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--text);
+    border-radius: 8px;
+    padding: 6px 10px;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    outline: none;
+    cursor: pointer;
+    width: auto;
+  }
+
+  /* ── EMPTY STATE ── */
+  .empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--muted);
+  }
+  .empty .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
+  .empty p { font-size: 0.9rem; }
+
+  /* ── DIVIDER ── */
+  .divider {
+    display: flex; align-items: center; gap: 12px;
+    margin: 16px 0;
+    color: var(--muted);
+    font-size: 0.75rem;
+    font-family: var(--mono);
+    letter-spacing: 0.1em;
+  }
+  .divider::before, .divider::after {
+    content: ''; flex: 1; height: 1px; background: var(--border);
+  }
+
+  /* ── GENERATOR CONTROLS ── */
+  .gen-options {
+    display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0;
+  }
+  .gen-chip {
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--muted);
+    font-size: 0.78rem;
+    cursor: pointer;
+    transition: all 0.15s;
+    width: auto;
+    font-family: var(--sans);
+  }
+  .gen-chip.active {
+    border-color: var(--gold);
+    color: var(--gold);
+    background: var(--gold-dim);
+  }
+
+  .slider-wrap { margin: 12px 0; }
+  .slider-row { display: flex; align-items: center; gap: 12px; }
+  .slider-row input[type=range] {
+    flex: 1; accent-color: var(--gold);
+    height: 4px;
+    cursor: pointer;
+    background: transparent;
+  }
+  .slider-val {
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--gold);
+    width: 28px;
+    text-align: right;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 20px 18px; }
+    .modal { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wordmark">
+  <div class="wordmark-icon">🔐</div>
+  <span class="wordmark-text">VAULT</span>
+</div>
+
+<div class="shell" id="shell"></div>
+<div id="toast">✓ Copiat în clipboard</div>
+
+<script>
+// ════════════════════════════════════════════════
+// CRYPTO ENGINE
+// ════════════════════════════════════════════════
+const Crypto = {
+  async deriveKey(pin, salt) {
+    const raw = await crypto.subtle.importKey(
+      'raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']
+    );
+    return crypto.subtle.deriveKey(
+      { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
+      raw, { name: 'AES-GCM', length: 256 }, false, ['encrypt', 'decrypt']
+    );
+  },
+
+  async encrypt(text, pin, salt) {
+    const iv  = crypto.getRandomValues(new Uint8Array(12));
+    const key = await this.deriveKey(pin, salt);
+    const enc = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv }, key, new TextEncoder().encode(text)
+    );
+    const out = new Uint8Array(12 + enc.byteLength);
+    out.set(iv); out.set(new Uint8Array(enc), 12);
+    return btoa(String.fromCharCode(...out));
+  },
+
+  async decrypt(b64, pin, salt) {
+    const buf  = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
+    const iv   = buf.slice(0, 12);
+    const data = buf.slice(12);
+    const key  = await this.deriveKey(pin, salt);
+    const dec  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
+    return new TextDecoder().decode(dec);
+  },
+
+  generatePassword(opts = {}) {
+    const { length = 20, upper = true, lower = true, digits = true, symbols = true } = opts;
+    let chars = '';
+    const pools = [];
+    if (lower)   { pools.push('abcdefghijkmnpqrstuvwxyz'); }
+    if (upper)   { pools.push('ABCDEFGHJKLMNPQRSTUVWXYZ'); }
+    if (digits)  { pools.push('23456789'); }
+    if (symbols) { pools.push('!@#$%^&*_-+=?'); }
+    if (!pools.length) pools.push('abcdefghijkmnpqrstuvwxyz');
+    chars = pools.join('');
+
+    const arr    = new Uint32Array(length + pools.length);
+    crypto.getRandomValues(arr);
+
+    // Guarantee at least one char from each pool
+    let result = pools.map((pool, i) => pool[arr[length + i] % pool.length]);
+    for (let i = result.length; i < length; i++) {
+      result.push(chars[arr[i] % chars.length]);
+    }
+    // Fisher-Yates shuffle (crypto)
+    const shuf = new Uint32Array(length);
+    crypto.getRandomValues(shuf);
+    for (let i = result.length - 1; i > 0; i--) {
+      const j = shuf[i] % (i + 1);
+      [result[i], result[j]] = [result[j], result[i]];
+    }
+    return result.join('');
+  },
+
+  strengthScore(pwd) {
+    if (!pwd) return { score: 0, label: '', color: '' };
+    let s = 0;
+    if (pwd.length >= 8)  s++;
+    if (pwd.length >= 12) s++;
+    if (pwd.length >= 16) s++;
+    if (/[A-Z]/.test(pwd) && /[a-z]/.test(pwd)) s++;
+    if (/[0-9]/.test(pwd)) s++;
+    if (/[^A-Za-z0-9]/.test(pwd)) s++;
+    const map = [
+      { label: 'SLABĂ',     color: '#e05252' },
+      { label: 'SLABĂ',     color: '#e05252' },
+      { label: 'MEDIE',     color: '#e09152' },
+      { label: 'BUNĂ',      color: '#e8c96d' },
+      { label: 'PUTERNICĂ', color: '#4caf82' },
+      { label: 'EXCELENTĂ', color: '#4caf82' },
+      { label: 'EXCELENTĂ', color: '#4caf82' },
+    ];
+    return { score: s, ...map[Math.min(s, 6)] };
+  }
+};
+
+// ════════════════════════════════════════════════
+// STORAGE KEYS
+// ════════════════════════════════════════════════
+const K = {
+  salt:     'v_salt',
+  data:     'v_data',
+  hasPin:   'v_pin',
+  settings: 'v_settings',
+  fails:    'v_fails',
+  lockUntil:'v_lock',
+};
+
+// ════════════════════════════════════════════════
+// STATE
+// ════════════════════════════════════════════════
+let state = {
+  entries:     [],
+  pin:         null,           // raw pin kept only in memory
+  unlocked:    false,
+  settings: {
+    lockAfter: 3,
+    wipeAfter: 5,
+    autoLockMins: 5,
+  },
+  searchQuery: '',
+  genOpts: { length: 20, upper: true, lower: true, digits: true, symbols: true },
+  inactivityTimer: null,
+};
+
+// ════════════════════════════════════════════════
+// SETTINGS
+// ════════════════════════════════════════════════
+function loadSettings() {
+  try {
+    const s = JSON.parse(localStorage.getItem(K.settings) || '{}');
+    state.settings = { ...state.settings, ...s };
+  } catch(e) {}
+}
+function saveSettings() {
+  localStorage.setItem(K.settings, JSON.stringify(state.settings));
+}
+
+// ════════════════════════════════════════════════
+// VAULT I/O
+// ════════════════════════════════════════════════
+function getSalt() {
+  const b = localStorage.getItem(K.salt);
+  if (!b) return null;
+  return Uint8Array.from(atob(b), c => c.charCodeAt(0));
+}
+function createSalt() {
+  const s = crypto.getRandomValues(new Uint8Array(16));
+  localStorage.setItem(K.salt, btoa(String.fromCharCode(...s)));
+  return s;
+}
+
+async function saveVault() {
+  if (!state.pin) return;
+  let salt = getSalt() || createSalt();
+  const enc = await Crypto.encrypt(JSON.stringify({ v:2, entries: state.entries }), state.pin, salt);
+  localStorage.setItem(K.data, enc);
+}
+
+async function loadVault(pin) {
+  const enc  = localStorage.getItem(K.data);
+  const salt = getSalt();
+  if (!enc || !salt) throw new Error('empty');
+  const plain = await Crypto.decrypt(enc, pin, salt);
+  return JSON.parse(plain).entries || [];
+}
+
+// ════════════════════════════════════════════════
+// LOCK / FAIL TRACKING
+// ════════════════════════════════════════════════
+function isLocked() {
+  const t = parseInt(localStorage.getItem(K.lockUntil) || '0');
+  if (t > Date.now()) return true;
+  localStorage.removeItem(K.lockUntil);
+  return false;
+}
+function lockUntil(ms) {
+  localStorage.setItem(K.lockUntil, String(Date.now() + ms));
+}
+function getFailCount() {
+  return parseInt(localStorage.getItem(K.fails) || '0');
+}
+function recordFail() {
+  const n = getFailCount() + 1;
+  localStorage.setItem(K.fails, String(n));
+  if (state.settings.wipeAfter && n >= state.settings.wipeAfter) {
+    localStorage.clear();
+    showToast('⚠️ Date șterse pentru securitate', 3000, '#e05252');
+    setTimeout(() => location.reload(), 1000);
+    return 'wiped';
+  }
+  if (n >= state.settings.lockAfter) {
+    lockUntil(5 * 60 * 1000);
+    return 'locked';
+  }
+  return n;
+}
+function clearFails() {
+  localStorage.removeItem(K.fails);
+  localStorage.removeItem(K.lockUntil);
+}
+
+// ════════════════════════════════════════════════
+// INACTIVITY AUTO-LOCK
+// ════════════════════════════════════════════════
+function resetInactivityTimer() {
+  clearTimeout(state.inactivityTimer);
+  if (!state.unlocked) return;
+  const mins = state.settings.autoLockMins;
+  if (!mins) return;
+  state.inactivityTimer = setTimeout(() => {
+    doLock();
+    showToast('🔒 Blocat automat după inactivitate');
+  }, mins * 60 * 1000);
+}
+['click','keydown','touchstart'].forEach(ev =>
+  document.addEventListener(ev, resetInactivityTimer, { passive: true })
+);
+
+function doLock() {
+  state.unlocked = false;
+  state.pin = null;
+  state.entries = [];
+  clearTimeout(state.inactivityTimer);
+  render();
+}
+
+// ════════════════════════════════════════════════
+// TOAST
+// ════════════════════════════════════════════════
+let toastTimer;
+function showToast(msg, dur = 1800, color) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.color  = color || 'var(--green)';
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), dur);
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('✓ Copiat în clipboard');
+  } catch(e) {
+    showToast('❌ Nu s-a putut copia', 2000, '#e05252');
+  }
+}
+
+// ════════════════════════════════════════════════
+// ESCAPE
+// ════════════════════════════════════════════════
+function esc(s) {
+  return String(s).replace(/[&<>"']/g, m =>
+    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])
+  );
+}
+
+function initials(s) {
+  return (s || '?').trim().charAt(0).toUpperCase();
+}
+
+// ════════════════════════════════════════════════
+// RENDER ROUTER
+// ════════════════════════════════════════════════
+const shell = document.getElementById('shell');
+
+function render() {
+  if (isLocked()) { renderTimeLocked(); return; }
+  if (!localStorage.getItem(K.hasPin)) { renderSetup(); return; }
+  if (!state.unlocked) { renderLogin(); return; }
+  renderApp();
+}
+
+// ════════════════════════════════════════════════
+// SETUP PIN
+// ════════════════════════════════════════════════
+function renderSetup() {
+  shell.innerHTML = `
+    <div class="card">
+      <div class="lock-visual">
+        <span class="lock-icon">🔐</span>
+        <div class="lock-title">Creează seiful tău</div>
+        <div class="lock-subtitle">Alege un PIN de 8 cifre pentru protejarea parolelor</div>
+      </div>
+      <div class="pin-display" id="pinDots">
+        ${Array(8).fill('<div class="pin-dot"></div>').join('')}
+      </div>
+      <div class="field">
+        <div class="input-wrap">
+          <input type="password" id="newPin" inputmode="numeric" maxlength="8" placeholder="PIN nou — 8 cifre" class="has-icon">
+          <button class="eye-btn" id="eye1" tabindex="-1">👁</button>
+        </div>
+      </div>
+      <div class="field">
+        <div class="input-wrap">
+          <input type="password" id="confirmPin" inputmode="numeric" maxlength="8" placeholder="Confirmă PIN-ul">
+        </div>
+      </div>
+      <button class="btn btn-primary" id="setupBtn">Activează seiful →</button>
+    </div>
+  `;
+
+  const newPin = document.getElementById('newPin');
+  const dots   = document.querySelectorAll('.pin-dot');
+
+  newPin.addEventListener('input', () => {
+    const n = newPin.value.length;
+    dots.forEach((d, i) => d.classList.toggle('filled', i < n));
+  });
+  toggleEye('eye1', 'newPin');
+  document.getElementById('confirmPin').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('setupBtn').click();
+  });
+  document.getElementById('setupBtn').addEventListener('click', async () => {
+    const p = newPin.value;
+    const c = document.getElementById('confirmPin').value;
+    if (!/^\d{8}$/.test(p)) { flashDots(dots, 'error'); return; }
+    if (p !== c) { showToast('❌ PIN-urile nu coincid', 2000, '#e05252'); return; }
+    createSalt();
+    state.pin     = p;
+    state.entries = [];
+    await saveVault();
+    localStorage.setItem(K.hasPin, '1');
+    clearFails();
+    state.unlocked = true;
+    resetInactivityTimer();
+    render();
+  });
+}
+
+// ════════════════════════════════════════════════
+// LOGIN
+// ════════════════════════════════════════════════
+function renderLogin() {
+  const fails = getFailCount();
+  const remaining = state.settings.lockAfter - fails;
+
+  shell.innerHTML = `
+    <div class="card">
+      <div class="lock-visual">
+        <span class="lock-icon">🔒</span>
+        <div class="lock-title">Deblochează seiful</div>
+        <div class="lock-subtitle">Introdu PIN-ul de 8 cifre</div>
+      </div>
+      <div class="pin-display" id="pinDots">
+        ${Array(8).fill('<div class="pin-dot"></div>').join('')}
+      </div>
+      <div class="field">
+        <div class="input-wrap">
+          <input type="password" id="loginPin" inputmode="numeric" maxlength="8"
+            placeholder="PIN — 8 cifre" autofocus class="has-icon">
+          <button class="eye-btn" id="eye2" tabindex="-1">👁</button>
+        </div>
+      </div>
+      ${fails > 0 ? `<p style="text-align:center;color:var(--red);font-size:0.8rem;margin-bottom:12px;">
+        ${remaining} ${remaining === 1 ? 'încercare rămasă' : 'încercări rămase'}
+      </p>` : ''}
+      <button class="btn btn-primary" id="unlockBtn">Deblochează →</button>
+    </div>
+  `;
+
+  const pin  = document.getElementById('loginPin');
+  const dots = document.querySelectorAll('.pin-dot');
+
+  pin.addEventListener('input', () => {
+    const n = pin.value.length;
+    dots.forEach((d, i) => d.classList.toggle('filled', i < n));
+    if (n === 8) setTimeout(() => document.getElementById('unlockBtn')?.click(), 100);
+  });
+  toggleEye('eye2', 'loginPin');
+
+  document.getElementById('unlockBtn').addEventListener('click', async () => {
+    const entered = pin.value;
+    if (!/^\d{8}$/.test(entered)) { flashDots(dots, 'error'); return; }
+    try {
+      state.entries = await loadVault(entered);
+      state.pin     = entered;
+      state.unlocked = true;
+      clearFails();
+      resetInactivityTimer();
+      render();
+    } catch(err) {
+      flashDots(dots, 'error');
+      pin.value = '';
+      dots.forEach(d => { d.classList.remove('filled'); });
+      const res = recordFail();
+      if (res === 'locked' || res === 'wiped') { render(); return; }
+      showToast(`❌ PIN greșit — mai ai ${state.settings.lockAfter - getFailCount()} încercări`, 2500, '#e05252');
+    }
+  });
+}
+
+// ════════════════════════════════════════════════
+// TIME-LOCKED
+// ════════════════════════════════════════════════
+function renderTimeLocked() {
+  const lockUntilTs = parseInt(localStorage.getItem(K.lockUntil) || '0');
+  shell.innerHTML = `
+    <div class="card" style="text-align:center;">
+      <span class="lock-icon" style="font-size:2.5rem;display:block;margin-bottom:12px;">🚫</span>
+      <div class="lock-title" style="color:var(--red)">Aplicație blocată</div>
+      <div class="lock-subtitle">Prea multe tentative. Reîncercați după:</div>
+      <div class="timer-display" id="countdown">--:--</div>
+      <button class="btn btn-ghost" onclick="render()">Reîncarcă</button>
+    </div>
+  `;
+
+  const cd = document.getElementById('countdown');
+  const tick = () => {
+    const rem = Math.max(0, lockUntilTs - Date.now());
+    const m = String(Math.floor(rem / 60000)).padStart(2, '0');
+    const s = String(Math.floor((rem % 60000) / 1000)).padStart(2, '0');
+    if (cd) cd.textContent = `${m}:${s}`;
+    if (rem > 0) setTimeout(tick, 1000); else render();
+  };
+  tick();
+}
+
+// ════════════════════════════════════════════════
+// MAIN APP
+// ════════════════════════════════════════════════
+function renderApp() {
+  shell.innerHTML = `
+    <div class="topbar">
+      <div>
+        <div class="topbar-title">Seiful meu</div>
+        <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">
+          <span class="badge">${state.entries.length} intrări</span>
+        </div>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-ghost btn-sm btn-icon" id="addBtn" title="Adaugă">＋</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="genBtn" title="Generator">🎲</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="settingsBtn" title="Setări">⚙</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="lockBtn" title="Blochează">🔒</button>
+      </div>
+    </div>
+
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Caută după site sau email…" value="${esc(state.searchQuery)}">
+    </div>
+
+    <div id="entriesList"></div>
+
+    <div style="margin-top:20px;">
+      <div class="section-label">Backup</div>
+      <div style="display:flex;gap:8px;">
+        <button class="btn btn-ghost btn-sm" id="exportBtn" style="flex:1;">📤 Exportă</button>
+        <label class="btn btn-ghost btn-sm" style="flex:1;cursor:pointer;margin:0;">
+          📥 Importă
+          <input type="file" id="importFile" accept=".vault" style="display:none;">
+        </label>
+      </div>
+    </div>
+  `;
+
+  renderEntries();
+
+  document.getElementById('searchInput').addEventListener('input', e => {
+    state.searchQuery = e.target.value;
+    renderEntries();
+  });
+  document.getElementById('addBtn').addEventListener('click', () => showEntryModal(null));
+  document.getElementById('genBtn').addEventListener('click', showGeneratorModal);
+  document.getElementById('settingsBtn').addEventListener('click', showSettingsModal);
+  document.getElementById('lockBtn').addEventListener('click', doLock);
+  document.getElementById('exportBtn').addEventListener('click', exportVault);
+  document.getElementById('importFile').addEventListener('change', importVault);
+}
+
+// ════════════════════════════════════════════════
+// ENTRIES LIST
+// ════════════════════════════════════════════════
+function renderEntries() {
+  const list  = document.getElementById('entriesList');
+  if (!list) return;
+  const q     = state.searchQuery.toLowerCase();
+  const shown = q
+    ? state.entries.filter(e =>
+        e.site.toLowerCase().includes(q) || e.email.toLowerCase().includes(q))
+    : state.entries;
+
+  if (!shown.length) {
+    list.innerHTML = `
+      <div class="empty">
+        <div class="empty-icon">${q ? '🔍' : '🗝️'}</div>
+        <p>${q ? 'Niciun rezultat pentru "' + esc(state.searchQuery) + '"' : 'Nicio parolă salvată.<br>Apasă ＋ pentru a adăuga.'}</p>
+      </div>`;
+    return;
+  }
+
+  list.innerHTML = '';
+  shown.forEach(entry => {
+    const div = document.createElement('div');
+    div.className = 'entry-card';
+    div.innerHTML = `
+      <div class="entry-avatar">${initials(entry.site)}</div>
+      <div class="entry-info">
+        <div class="entry-site">${esc(entry.site)}</div>
+        <div class="entry-email">${esc(entry.email)}</div>
+      </div>
+      <div class="entry-actions">
+        <button class="btn btn-ghost btn-icon" data-copy="${entry.id}" title="Copiază parola">📋</button>
+        <button class="btn btn-ghost btn-icon" data-view="${entry.id}" title="Vezi parola">👁</button>
+        <button class="btn btn-ghost btn-icon" data-edit="${entry.id}" title="Editează">✏️</button>
+        <button class="btn btn-danger btn-icon" data-del="${entry.id}" title="Șterge">🗑</button>
+      </div>
+    `;
+    list.appendChild(div);
+  });
+
+  list.querySelectorAll('[data-copy]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const e = state.entries.find(x => x.id === btn.dataset.copy);
+      if (e) copyText(e.password);
+    });
+  });
+  list.querySelectorAll('[data-view]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const e = state.entries.find(x => x.id === btn.dataset.view);
+      if (e) showRevealModal(e);
+    });
+  });
+  list.querySelectorAll('[data-edit]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const e = state.entries.find(x => x.id === btn.dataset.edit);
+      if (e) showEntryModal(e);
+    });
+  });
+  list.querySelectorAll('[data-del]').forEach(btn => {
+    btn.addEventListener('click', () => confirmDelete(btn.dataset.del));
+  });
+}
+
+// ════════════════════════════════════════════════
+// MODAL HELPERS
+// ════════════════════════════════════════════════
+function openModal(html, onClose) {
+  const overlay = document.createElement('div');
+  overlay.className = 'overlay';
+  overlay.innerHTML = `<div class="modal">${html}</div>`;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', e => {
+    if (e.target === overlay) { overlay.remove(); if (onClose) onClose(); }
+  });
+  document.addEventListener('keydown', function esc(e) {
+    if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', esc); if (onClose) onClose(); }
+  });
+  return overlay;
+}
+
+function closeAllModals() {
+  document.querySelectorAll('.overlay').forEach(o => o.remove());
+}
+
+// ════════════════════════════════════════════════
+// ADD / EDIT ENTRY MODAL
+// ════════════════════════════════════════════════
+function showEntryModal(entry) {
+  const isEdit = !!entry;
+  const overlay = openModal(`
+    <div class="modal-title">${isEdit ? '✏️ Editează intrare' : '➕ Intrare nouă'}</div>
+    <div class="field">
+      <label>Site / Platformă</label>
+      <div class="input-wrap">
+        <input type="text" id="mSite" placeholder="ex: Instagram, Gmail, BRD…" value="${isEdit ? esc(entry.site) : ''}">
+      </div>
+    </div>
+    <div class="field">
+      <label>Email / Username</label>
+      <div class="input-wrap">
+        <input type="email" id="mEmail" placeholder="email@exemplu.com" value="${isEdit ? esc(entry.email) : ''}">
+      </div>
+    </div>
+    <div class="field">
+      <label>Parolă</label>
+      <div class="input-wrap">
+        <input type="password" id="mPassword" placeholder="Parola secretă" value="${isEdit ? esc(entry.password) : ''}" class="has-icon">
+        <button class="eye-btn" id="mEye">👁</button>
+      </div>
+      <div class="strength-wrap">
+        <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%;background:var(--border)"></div></div>
+        <div class="strength-label" id="strengthLabel">—</div>
+      </div>
+    </div>
+    <div id="mDupWarn" style="display:none;" class="warning-text"></div>
+    <div style="display:flex;gap:10px;margin-top:4px;">
+      <button class="btn btn-ghost btn-sm" id="mGen" style="flex:none;">🎲 Generează</button>
+      <button class="btn btn-primary" id="mSave" style="flex:1;">💾 Salvează</button>
+    </div>
+    <button class="btn btn-ghost" id="mCancel" style="margin-top:8px;">Anulează</button>
+  `);
+
+  toggleEye('mEye', 'mPassword');
+
+  const pwdInput = document.getElementById('mPassword');
+  const fill     = document.getElementById('strengthFill');
+  const slabel   = document.getElementById('strengthLabel');
+
+  function updateStrength() {
+    const s = Crypto.strengthScore(pwdInput.value);
+    const pct = Math.round((s.score / 6) * 100);
+    fill.style.width = pct + '%';
+    fill.style.background = s.color;
+    slabel.style.color = s.color;
+    slabel.textContent = s.label || '—';
+  }
+
+  pwdInput.addEventListener('input', updateStrength);
+  if (isEdit) updateStrength();
+
+  document.getElementById('mGen').addEventListener('click', () => {
+    pwdInput.value = Crypto.generatePassword(state.genOpts);
+    pwdInput.type = 'text';
+    document.getElementById('mEye').textContent = '🙈';
+    updateStrength();
+  });
+
+  document.getElementById('mSave').addEventListener('click', async () => {
+    const site  = document.getElementById('mSite').value.trim();
+    const email = document.getElementById('mEmail').value.trim();
+    const pwd   = pwdInput.value.trim();
+    const warn  = document.getElementById('mDupWarn');
+
+    if (!site || !email || !pwd) {
+      showToast('❌ Completează toate câmpurile', 2000, '#e05252'); return;
+    }
+
+    const dup = state.entries.find(e =>
+      e.site.toLowerCase() === site.toLowerCase() &&
+      e.email.toLowerCase() === email.toLowerCase() &&
+      (!isEdit || e.id !== entry.id)
+    );
+    if (dup) {
+      warn.style.display = 'block';
+      warn.textContent = `⚠️ Există deja o intrare pentru "${site}" cu acest email.`;
+      return;
+    }
+
+    if (isEdit) {
+      const i = state.entries.findIndex(e => e.id === entry.id);
+      if (i !== -1) state.entries[i] = { ...entry, site, email, password: pwd };
+    } else {
+      state.entries.push({ id: crypto.randomUUID(), site, email, password: pwd, created: Date.now() });
+    }
+
+    await saveVault();
+    closeAllModals();
+    renderEntries();
+    // update badge
+    const badge = document.querySelector('.badge');
+    if (badge) badge.textContent = state.entries.length + ' intrări';
+    showToast(isEdit ? '✓ Actualizat' : '✓ Salvat');
+  });
+
+  document.getElementById('mCancel').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// REVEAL MODAL
+// ════════════════════════════════════════════════
+function showRevealModal(entry) {
+  const overlay = openModal(`
+    <div class="modal-title">🔑 Parolă</div>
+    <div class="reveal-box">
+      <div class="reveal-site">${esc(entry.site)}</div>
+      <div class="reveal-password" id="revealPwd" style="filter:blur(6px);cursor:pointer;" title="Click pentru a vedea">
+        ${esc(entry.password)}
+      </div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:10px;">Click pe parolă pentru a o afișa</div>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" id="copyReveal">📋 Copiază parola</button>
+      <button class="btn btn-ghost" id="closeReveal">Închide</button>
+    </div>
+  `);
+
+  const revEl = document.getElementById('revealPwd');
+  let revealed = false;
+  revEl.addEventListener('click', () => {
+    revealed = !revealed;
+    revEl.style.filter = revealed ? 'none' : 'blur(6px)';
+  });
+
+  document.getElementById('copyReveal').addEventListener('click', () => {
+    copyText(entry.password);
+    overlay.remove();
+  });
+  document.getElementById('closeReveal').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// DELETE CONFIRM
+// ════════════════════════════════════════════════
+function confirmDelete(id) {
+  const entry = state.entries.find(e => e.id === id);
+  if (!entry) return;
+  const overlay = openModal(`
+    <div class="modal-title" style="color:var(--red)">🗑 Confirmare ștergere</div>
+    <p style="margin-bottom:20px;color:var(--muted);">
+      Ești sigur că vrei să ștergi parola pentru
+      <strong style="color:var(--text);">${esc(entry.site)}</strong>?
+      Această acțiune este ireversibilă.
+    </p>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-danger" id="confirmDel" style="flex:1;">Da, șterge</button>
+      <button class="btn btn-ghost" id="cancelDel" style="flex:1;">Anulează</button>
+    </div>
+  `);
+
+  document.getElementById('confirmDel').addEventListener('click', async () => {
+    state.entries = state.entries.filter(e => e.id !== id);
+    await saveVault();
+    overlay.remove();
+    renderEntries();
+    const badge = document.querySelector('.badge');
+    if (badge) badge.textContent = state.entries.length + ' intrări';
+    showToast('🗑 Șters');
+  });
+  document.getElementById('cancelDel').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// GENERATOR MODAL
+// ════════════════════════════════════════════════
+function showGeneratorModal() {
+  const o = state.genOpts;
+  const overlay = openModal(`
+    <div class="modal-title">🎲 Generator de parole</div>
+    <div class="reveal-box" style="margin-bottom:16px;">
+      <div class="reveal-password" id="genOutput" style="font-size:1rem;min-height:40px;word-break:break-all;">—</div>
+    </div>
+    <div class="slider-wrap">
+      <label style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Lungime</label>
+      <div class="slider-row">
+        <input type="range" id="genLen" min="8" max="40" value="${o.length}">
+        <span class="slider-val" id="genLenVal">${o.length}</span>
+      </div>
+    </div>
+    <div class="gen-options">
+      <button class="gen-chip ${o.upper ? 'active' : ''}" id="cUpper">ABC</button>
+      <button class="gen-chip ${o.lower ? 'active' : ''}" id="cLower">abc</button>
+      <button class="gen-chip ${o.digits ? 'active' : ''}" id="cDigits">123</button>
+      <button class="gen-chip ${o.symbols ? 'active' : ''}" id="cSymbols">!@#</button>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:8px;">
+      <button class="btn btn-primary" id="genRefresh" style="flex:1;">🔄 Generează</button>
+      <button class="btn btn-ghost" id="genCopy" style="flex:1;">📋 Copiază</button>
+    </div>
+    <button class="btn btn-ghost" id="genClose" style="margin-top:8px;">Închide</button>
+  `);
+
+  let current = '';
+
+  function generate() {
+    current = Crypto.generatePassword(state.genOpts);
+    const el = document.getElementById('genOutput');
+    if (el) el.textContent = current;
+  }
+
+  document.getElementById('genLen').addEventListener('input', e => {
+    state.genOpts.length = parseInt(e.target.value);
+    document.getElementById('genLenVal').textContent = e.target.value;
+    generate();
+  });
+  ['Upper','Lower','Digits','Symbols'].forEach(k => {
+    const key = k.toLowerCase();
+    const btn = document.getElementById('c' + k);
+    btn.addEventListener('click', () => {
+      state.genOpts[key] = !state.genOpts[key];
+      btn.classList.toggle('active', state.genOpts[key]);
+      generate();
+    });
+  });
+
+  document.getElementById('genRefresh').addEventListener('click', generate);
+  document.getElementById('genCopy').addEventListener('click', () => {
+    if (current) copyText(current);
+  });
+  document.getElementById('genClose').addEventListener('click', () => overlay.remove());
+
+  generate();
+}
+
+// ════════════════════════════════════════════════
+// SETTINGS MODAL
+// ════════════════════════════════════════════════
+function showSettingsModal() {
+  const s = state.settings;
+  const overlay = openModal(`
+    <div class="modal-title">⚙ Setări</div>
+
+    <div class="setting-row">
+      <div class="setting-row-info">
+        <div class="setting-row-label">Blocare după tentative greșite</div>
+        <div class="setting-row-desc">Blochează aplicația 5 minute</div>
+      </div>
+      <select class="select-mini" id="sLock">
+        <option value="3" ${s.lockAfter===3?'selected':''}>3</option>
+        <option value="4" ${s.lockAfter===4?'selected':''}>4</option>
+        <option value="5" ${s.lockAfter===5?'selected':''}>5</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-row-info">
+        <div class="setting-row-label">Ștergere date după tentative</div>
+        <div class="setting-row-desc" style="color:var(--red)">⚠️ Ireversibil</div>
+      </div>
+      <select class="select-mini" id="sWipe">
+        <option value="0" ${s.wipeAfter===0?'selected':''}>Dezactivat</option>
+        <option value="5" ${s.wipeAfter===5?'selected':''}>5</option>
+        <option value="7" ${s.wipeAfter===7?'selected':''}>7</option>
+        <option value="10" ${s.wipeAfter===10?'selected':''}>10</option>
+      </select>
+    </div>
+
+    <div class="setting-row">
+      <div class="setting-row-info">
+        <div class="setting-row-label">Auto-blocare după inactivitate</div>
+        <div class="setting-row-desc">Blochează automat seiful</div>
+      </div>
+      <select class="select-mini" id="sAuto">
+        <option value="0"  ${s.autoLockMins===0?'selected':''}>Niciodată</option>
+        <option value="2"  ${s.autoLockMins===2?'selected':''}>2 min</option>
+        <option value="5"  ${s.autoLockMins===5?'selected':''}>5 min</option>
+        <option value="10" ${s.autoLockMins===10?'selected':''}>10 min</option>
+        <option value="30" ${s.autoLockMins===30?'selected':''}>30 min</option>
+      </select>
+    </div>
+
+    <div class="divider" style="margin:20px 0 12px;">Pericol</div>
+    <button class="btn btn-danger" id="sPinChange">🔑 Schimbă PIN-ul</button>
+    <button class="btn btn-danger" id="sWipeAll" style="margin-top:8px;">💀 Șterge tot seiful</button>
+    <button class="btn btn-ghost" id="sClose" style="margin-top:8px;">Închide</button>
+  `);
+
+  document.getElementById('sLock').addEventListener('change', e => {
+    state.settings.lockAfter = parseInt(e.target.value);
+    saveSettings();
+  });
+  document.getElementById('sWipe').addEventListener('change', e => {
+    state.settings.wipeAfter = parseInt(e.target.value);
+    saveSettings();
+  });
+  document.getElementById('sAuto').addEventListener('change', e => {
+    state.settings.autoLockMins = parseInt(e.target.value);
+    saveSettings();
+    resetInactivityTimer();
+  });
+  document.getElementById('sPinChange').addEventListener('click', () => {
+    overlay.remove(); showChangePinModal();
+  });
+  document.getElementById('sWipeAll').addEventListener('click', () => {
+    confirmWipe(); overlay.remove();
+  });
+  document.getElementById('sClose').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// CHANGE PIN MODAL
+// ════════════════════════════════════════════════
+function showChangePinModal() {
+  const overlay = openModal(`
+    <div class="modal-title">🔑 Schimbă PIN</div>
+    <div class="field">
+      <label>PIN curent</label>
+      <div class="input-wrap">
+        <input type="password" id="cpOld" inputmode="numeric" maxlength="8" placeholder="PIN curent" class="has-icon">
+        <button class="eye-btn" id="cpEye1">👁</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>PIN nou</label>
+      <div class="input-wrap">
+        <input type="password" id="cpNew" inputmode="numeric" maxlength="8" placeholder="PIN nou — 8 cifre" class="has-icon">
+        <button class="eye-btn" id="cpEye2">👁</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Confirmă PIN nou</label>
+      <div class="input-wrap">
+        <input type="password" id="cpConf" inputmode="numeric" maxlength="8" placeholder="Repetă PIN-ul nou">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" id="cpSave" style="flex:1;">Salvează</button>
+      <button class="btn btn-ghost" id="cpCancel" style="flex:1;">Anulează</button>
+    </div>
+  `);
+
+  toggleEye('cpEye1', 'cpOld');
+  toggleEye('cpEye2', 'cpNew');
+
+  document.getElementById('cpSave').addEventListener('click', async () => {
+    const old  = document.getElementById('cpOld').value;
+    const nw   = document.getElementById('cpNew').value;
+    const conf = document.getElementById('cpConf').value;
+
+    if (old !== state.pin) {
+      showToast('❌ PIN curent greșit', 2000, '#e05252'); return;
+    }
+    if (!/^\d{8}$/.test(nw)) {
+      showToast('❌ PIN-ul trebuie să aibă exact 8 cifre', 2000, '#e05252'); return;
+    }
+    if (nw !== conf) {
+      showToast('❌ PIN-urile nu coincid', 2000, '#e05252'); return;
+    }
+    state.pin = nw;
+    await saveVault();
+    overlay.remove();
+    showToast('✓ PIN schimbat cu succes');
+  });
+  document.getElementById('cpCancel').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// WIPE CONFIRM
+// ════════════════════════════════════════════════
+function confirmWipe() {
+  openModal(`
+    <div class="modal-title" style="color:var(--red)">💀 Atenție maximă</div>
+    <p style="color:var(--muted);margin-bottom:8px;">
+      Aceasta va șterge <strong style="color:var(--red)">definitiv și ireversibil</strong>
+      toate parolele și setările tale. Nu există nicio modalitate de recuperare.
+    </p>
+    <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">
+      Tastează <strong style="color:var(--red)">STERG TOT</strong> pentru a confirma:
+    </p>
+    <div class="field">
+      <input type="text" id="wipeConfirm" placeholder="STERG TOT">
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-danger" id="wipeExec" style="flex:1;">Șterge definitiv</button>
+      <button class="btn btn-ghost" id="wipeCancel" style="flex:1;">Anulează</button>
+    </div>
+  `);
+
+  document.getElementById('wipeExec').addEventListener('click', () => {
+    if (document.getElementById('wipeConfirm').value !== 'STERG TOT') {
+      showToast('❌ Tastează exact: STERG TOT', 2000, '#e05252'); return;
+    }
+    localStorage.clear();
+    showToast('🗑 Toate datele au fost șterse', 3000, '#e05252');
+    setTimeout(() => location.reload(), 1200);
+  });
+  document.getElementById('wipeCancel')?.addEventListener('click', closeAllModals);
+}
+
+// ════════════════════════════════════════════════
+// EXPORT / IMPORT
+// ════════════════════════════════════════════════
+async function exportVault() {
+  const salt = getSalt();
+  const enc  = await Crypto.encrypt(
+    JSON.stringify({ v: 2, entries: state.entries, ts: Date.now() }),
+    state.pin, salt
+  );
+  const blob = new Blob([enc], { type: 'application/octet-stream' });
+  const a    = document.createElement('a');
+  a.href     = URL.createObjectURL(blob);
+  a.download = `vault_${new Date().toISOString().slice(0, 10)}.vault`;
+  a.click();
+  URL.revokeObjectURL(a.href);
+  showToast('✓ Backup exportat');
+}
+
+async function importVault(evt) {
+  const file = evt.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = async e => {
+    try {
+      const salt = getSalt();
+      const dec  = await Crypto.decrypt(e.target.result, state.pin, salt);
+      const data = JSON.parse(dec);
+      if (!Array.isArray(data.entries)) throw new Error();
+      const before = state.entries.length;
+      const existing = new Set(state.entries.map(e => e.id));
+      data.entries.forEach(entry => {
+        if (!entry.id || !entry.site || !entry.email || !entry.password) return;
+        if (!existing.has(entry.id)) state.entries.push(entry);
+      });
+      await saveVault();
+      renderEntries();
+      const added = state.entries.length - before;
+      showToast(`✓ Import reușit — ${added} intrări noi`);
+    } catch(err) {
+      showToast('❌ Fișier invalid sau PIN greșit', 2500, '#e05252');
+    }
+  };
+  reader.readAsText(file);
+  evt.target.value = '';
+}
+
+// ════════════════════════════════════════════════
+// HELPERS
+// ════════════════════════════════════════════════
+function toggleEye(btnId, inputId) {
+  const btn   = document.getElementById(btnId);
+  const input = document.getElementById(inputId);
+  if (!btn || !input) return;
+  btn.addEventListener('click', () => {
+    const shown = input.type === 'text';
+    input.type  = shown ? 'password' : 'text';
+    btn.textContent = shown ? '👁' : '🙈';
+  });
+}
+
+function flashDots(dots, cls) {
+  dots.forEach(d => d.classList.add(cls));
+  setTimeout(() => dots.forEach(d => d.classList.remove(cls)), 600);
+}
+
+// ════════════════════════════════════════════════
+// BOOT
+// ════════════════════════════════════════════════
+loadSettings();
+render();
+</script>
+</body>
+</html>
 
         body.light-mode .card {
             background: #f0f0f0;
