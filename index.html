@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ro">
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -7,21 +7,22 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
 <style>
+  /* ── Design tokens ── */
   :root {
-    --black:    #0a0a0c;
-    --surface:  #111116;
-    --panel:    #17171e;
-    --border:   #2a2a35;
-    --border2:  #3a3a48;
-    --gold:     #c9a84c;
-    --gold2:    #e8c96d;
-    --gold-dim: #c9a84c22;
-    --red:      #e05252;
-    --red-dim:  #e0525218;
-    --green:    #4caf82;
-    --green-dim:#4caf8218;
-    --text:     #e8e8f0;
-    --muted:    #7a7a90;
+    --black:     #0a0a0c;
+    --surface:   #111116;
+    --panel:     #17171e;
+    --border:    #2a2a35;
+    --border2:   #3a3a48;
+    --gold:      #c9a84c;
+    --gold2:     #e8c96d;
+    --gold-dim:  #c9a84c22;
+    --red:       #e05252;
+    --red-dim:   #e0525218;
+    --green:     #4caf82;
+    --green-dim: #4caf8218;
+    --text:      #e8e8f0;
+    --muted:     #7a7a90;
     --mono: 'DM Mono', monospace;
     --sans: 'Sora', sans-serif;
   }
@@ -44,6 +45,7 @@
       repeating-linear-gradient(90deg, transparent, transparent 39px, #ffffff04 39px, #ffffff04 40px);
   }
 
+  /* ── Wordmark / logo ── */
   .wordmark {
     display: flex; align-items: center; gap: 12px;
     margin-bottom: 32px;
@@ -65,8 +67,10 @@
     text-transform: uppercase;
   }
 
+  /* ── Main shell container ── */
   .shell { width: 100%; max-width: 540px; animation: fadeUp 0.5s ease both 0.1s; }
 
+  /* ── Card ── */
   .card {
     background: var(--panel);
     border: 1px solid var(--border);
@@ -78,13 +82,13 @@
   }
   .card::before {
     content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
+    position: absolute; top: 0; left: 0; right: 0;
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: 0.4;
   }
 
+  /* ── Section label ── */
   .section-label {
     font-family: var(--mono);
     font-size: 0.65rem;
@@ -96,6 +100,7 @@
   }
   .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
+  /* ── Form fields ── */
   .field { margin-bottom: 16px; }
   .field label {
     display: block;
@@ -133,7 +138,7 @@
   .input-wrap .eye-btn:hover { color: var(--gold); }
   .input-wrap input.has-icon { padding-right: 44px; }
 
-  /* PIN length selector */
+  /* ── PIN length selector ── */
   .pin-length-selector {
     display: flex; gap: 8px; margin-bottom: 20px; justify-content: center;
   }
@@ -155,7 +160,7 @@
     background: var(--gold-dim);
   }
 
-  /* PIN dots */
+  /* ── PIN dots indicator ── */
   .pin-display { display: flex; gap: 10px; justify-content: center; margin: 20px 0; }
   .pin-dot {
     width: 14px; height: 14px;
@@ -167,7 +172,7 @@
   .pin-dot.filled { border-color: var(--gold); background: var(--gold); box-shadow: 0 0 8px #c9a84c80; }
   .pin-dot.error  { border-color: var(--red);  background: var(--red);  animation: shake 0.4s ease; }
 
-  /* Buttons */
+  /* ── Buttons ── */
   .btn {
     width: 100%; padding: 13px 20px;
     border: none; border-radius: 12px;
@@ -183,17 +188,21 @@
   .btn-ghost:hover { border-color: var(--border2); color: var(--text); }
   .btn-danger { background: var(--red-dim); color: var(--red); border: 1px solid #e0525230; }
   .btn-danger:hover { background: #e0525228; }
-  .btn-sm { padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; width: auto; }
+  .btn-sm   { padding: 8px 14px; font-size: 0.8rem; border-radius: 8px; width: auto; }
   .btn-icon { width: 36px; height: 36px; padding: 0; border-radius: 9px; font-size: 15px; }
 
-  /* Top bar */
+  /* ── Top bar ── */
   .topbar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; gap: 12px; }
   .topbar-title { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.15em; color: var(--gold); text-transform: uppercase; }
   .topbar-actions { display: flex; gap: 8px; }
 
-  /* Search */
+  /* ── Search bar ── */
   .search-wrap { position: relative; margin-bottom: 16px; }
-  .search-wrap .search-icon { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 14px; pointer-events: none; }
+  .search-wrap .search-icon {
+    position: absolute; left: 14px; top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted); font-size: 14px; pointer-events: none;
+  }
   .search-wrap input {
     width: 100%; background: var(--surface); border: 1px solid var(--border);
     border-radius: 12px; padding: 11px 16px 11px 40px;
@@ -203,7 +212,7 @@
   .search-wrap input:focus { border-color: var(--gold); box-shadow: 0 0 0 3px #c9a84c15; }
   .search-wrap input::placeholder { color: var(--muted); }
 
-  /* Entry list */
+  /* ── Entry list ── */
   #entriesList { display: flex; flex-direction: column; gap: 8px; }
   .entry-card {
     background: var(--surface); border: 1px solid var(--border);
@@ -221,17 +230,17 @@
     font-family: var(--mono); font-weight: 500; color: var(--gold); text-transform: uppercase;
   }
   .entry-info { flex: 1; min-width: 0; }
-  .entry-site { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .entry-site  { font-weight: 600; font-size: 0.95rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .entry-email { font-family: var(--mono); font-size: 0.72rem; color: var(--muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 2px; }
   .entry-actions { display: flex; gap: 6px; flex-shrink: 0; }
 
-  /* Strength bar */
-  .strength-wrap { margin-top: 8px; }
-  .strength-bar { height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; }
-  .strength-fill { height: 100%; border-radius: 2px; transition: width 0.3s ease, background 0.3s ease; }
+  /* ── Password strength bar ── */
+  .strength-wrap  { margin-top: 8px; }
+  .strength-bar   { height: 3px; border-radius: 2px; background: var(--border); overflow: hidden; }
+  .strength-fill  { height: 100%; border-radius: 2px; transition: width 0.3s ease, background 0.3s ease; }
   .strength-label { font-family: var(--mono); font-size: 0.65rem; letter-spacing: 0.1em; text-transform: uppercase; margin-top: 5px; color: var(--muted); }
 
-  /* Modal */
+  /* ── Modal overlay ── */
   .overlay {
     position: fixed; inset: 0;
     background: rgba(0,0,0,0.85); backdrop-filter: blur(4px);
@@ -259,12 +268,12 @@
     color: var(--gold); margin-bottom: 20px;
   }
 
-  /* Password reveal */
+  /* ── Password reveal box ── */
   .reveal-box { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 20px; text-align: center; margin: 16px 0; }
   .reveal-site { font-size: 0.8rem; color: var(--muted); margin-bottom: 8px; font-family: var(--mono); letter-spacing: 0.1em; text-transform: uppercase; }
   .reveal-password { font-family: var(--mono); font-size: 1.1rem; letter-spacing: 0.15em; color: var(--gold); word-break: break-all; line-height: 1.5; user-select: all; }
 
-  /* Toast */
+  /* ── Toast notification ── */
   #toast {
     position: fixed; bottom: 28px; left: 50%;
     transform: translateX(-50%) translateY(100px);
@@ -278,6 +287,7 @@
   }
   #toast.show { transform: translateX(-50%) translateY(0); }
 
+  /* ── Badge ── */
   .badge {
     display: inline-flex; align-items: center;
     background: var(--gold-dim); color: var(--gold);
@@ -285,36 +295,41 @@
     padding: 2px 8px; font-family: var(--mono); font-size: 0.7rem; letter-spacing: 0.05em;
   }
 
-  /* Lock screen */
+  /* ── Lock screen ── */
   .lock-visual { text-align: center; padding: 20px 0 10px; }
-  .lock-icon { font-size: 3rem; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 12px #c9a84c50); }
-  .lock-title { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+  .lock-icon     { font-size: 3rem; margin-bottom: 12px; display: block; filter: drop-shadow(0 0 12px #c9a84c50); }
+  .lock-title    { font-family: var(--mono); font-size: 0.75rem; letter-spacing: 0.25em; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
   .lock-subtitle { font-size: 0.85rem; color: var(--muted); }
 
+  /* ── Time-locked countdown ── */
   .timer-display { font-family: var(--mono); font-size: 2rem; color: var(--red); text-align: center; letter-spacing: 0.1em; margin: 16px 0; }
 
-  /* Settings rows */
+  /* ── Settings rows ── */
   .setting-row { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border); gap: 16px; }
   .setting-row:last-child { border-bottom: none; }
-  .setting-row-info { flex: 1; }
+  .setting-row-info  { flex: 1; }
   .setting-row-label { font-weight: 600; font-size: 0.9rem; }
-  .setting-row-desc { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
+  .setting-row-desc  { font-size: 0.75rem; color: var(--muted); margin-top: 2px; }
 
+  /* ── Toggle switch ── */
   .toggle { width: 44px; height: 24px; background: var(--border2); border-radius: 12px; position: relative; cursor: pointer; flex-shrink: 0; border: none; transition: background 0.2s; }
   .toggle::after { content: ''; position: absolute; width: 18px; height: 18px; background: var(--muted); border-radius: 50%; top: 3px; left: 3px; transition: transform 0.2s, background 0.2s; }
   .toggle.on { background: #c9a84c30; }
   .toggle.on::after { transform: translateX(20px); background: var(--gold); }
 
+  /* ── Mini select ── */
   .select-mini { background: var(--surface); border: 1px solid var(--border); color: var(--text); border-radius: 8px; padding: 6px 10px; font-family: var(--mono); font-size: 0.8rem; outline: none; cursor: pointer; width: auto; }
 
+  /* ── Empty state ── */
   .empty { text-align: center; padding: 40px 20px; color: var(--muted); }
   .empty .empty-icon { font-size: 2.5rem; margin-bottom: 12px; opacity: 0.4; }
   .empty p { font-size: 0.9rem; }
 
+  /* ── Divider ── */
   .divider { display: flex; align-items: center; gap: 12px; margin: 16px 0; color: var(--muted); font-size: 0.75rem; font-family: var(--mono); letter-spacing: 0.1em; }
   .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
-  /* Generator */
+  /* ── Password generator chips / slider ── */
   .gen-options { display: flex; gap: 8px; flex-wrap: wrap; margin: 12px 0; }
   .gen-chip { padding: 6px 14px; border-radius: 20px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 0.78rem; cursor: pointer; transition: all 0.15s; width: auto; font-family: var(--sans); }
   .gen-chip.active { border-color: var(--gold); color: var(--gold); background: var(--gold-dim); }
@@ -323,8 +338,8 @@
   .slider-row input[type=range] { flex: 1; accent-color: var(--gold); height: 4px; cursor: pointer; background: transparent; }
   .slider-val { font-family: var(--mono); font-size: 0.85rem; color: var(--gold); width: 28px; text-align: right; }
 
-  /* Recovery questions */
-  .recovery-info {
+  /* ── Info box (recovery / export notices) ── */
+  .info-box {
     background: #c9a84c0a;
     border: 1px solid #c9a84c25;
     border-radius: 12px;
@@ -334,14 +349,14 @@
     margin-bottom: 16px;
     line-height: 1.6;
   }
-  .recovery-info strong { color: var(--gold); }
+  .info-box strong { color: var(--gold); }
 
-  /* Animations */
+  /* ── Animations ── */
   @keyframes fadeDown { from { opacity: 0; transform: translateY(-16px); } to { opacity: 1; transform: translateY(0); } }
   @keyframes fadeUp   { from { opacity: 0; transform: translateY(16px);  } to { opacity: 1; transform: translateY(0); } }
-  @keyframes fadeIn   { from { opacity: 0; } to { opacity: 1; } }
+  @keyframes fadeIn   { from { opacity: 0; }                               to { opacity: 1; } }
   @keyframes slideUp  { from { opacity: 0; transform: translateY(30px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
-  @keyframes shake    { 0%,100% { transform: translateX(0); } 20% { transform: translateX(-6px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(4px); } }
+  @keyframes shake    { 0%,100%{transform:translateX(0)} 20%{transform:translateX(-6px)} 40%{transform:translateX(6px)} 60%{transform:translateX(-4px)} 80%{transform:translateX(4px)} }
   @keyframes pulse    { 0%,100% { opacity: 1; } 50% { opacity: 0.5; } }
   .pulse { animation: pulse 1.5s ease infinite; }
 
@@ -359,16 +374,21 @@
 </div>
 
 <div class="shell" id="shell"></div>
-<div id="toast">✓ Copiat în clipboard</div>
+<div id="toast">✓ Copied to clipboard</div>
 
 <script>
 // ════════════════════════════════════════════════
 // CRYPTO ENGINE
+// AES-256-GCM encryption with PBKDF2 key derivation.
+// Every call to encrypt() uses a fresh random IV.
+// The output is base64: [12-byte IV] + [ciphertext].
 // ════════════════════════════════════════════════
 const Crypto = {
-  async deriveKey(pin, salt) {
+
+  // Derive an AES-GCM key from a passphrase + salt via PBKDF2
+  async deriveKey(passphrase, salt) {
     const raw = await crypto.subtle.importKey(
-      'raw', new TextEncoder().encode(pin), 'PBKDF2', false, ['deriveKey']
+      'raw', new TextEncoder().encode(passphrase), 'PBKDF2', false, ['deriveKey']
     );
     return crypto.subtle.deriveKey(
       { name: 'PBKDF2', salt, iterations: 150000, hash: 'SHA-256' },
@@ -376,26 +396,30 @@ const Crypto = {
     );
   },
 
-  async encrypt(text, pin, salt) {
+  // Encrypt plain text — returns base64 string (IV + ciphertext)
+  async encrypt(text, passphrase, salt) {
     const iv  = crypto.getRandomValues(new Uint8Array(12));
-    const key = await this.deriveKey(pin, salt);
+    const key = await this.deriveKey(passphrase, salt);
     const enc = await crypto.subtle.encrypt(
       { name: 'AES-GCM', iv }, key, new TextEncoder().encode(text)
     );
     const out = new Uint8Array(12 + enc.byteLength);
-    out.set(iv); out.set(new Uint8Array(enc), 12);
+    out.set(iv);
+    out.set(new Uint8Array(enc), 12);
     return btoa(String.fromCharCode(...out));
   },
 
-  async decrypt(b64, pin, salt) {
+  // Decrypt base64 ciphertext — throws on wrong passphrase or corrupt data
+  async decrypt(b64, passphrase, salt) {
     const buf  = Uint8Array.from(atob(b64), c => c.charCodeAt(0));
     const iv   = buf.slice(0, 12);
     const data = buf.slice(12);
-    const key  = await this.deriveKey(pin, salt);
+    const key  = await this.deriveKey(passphrase, salt);
     const dec  = await crypto.subtle.decrypt({ name: 'AES-GCM', iv }, key, data);
     return new TextDecoder().decode(dec);
   },
 
+  // Generate a cryptographically random password
   generatePassword(opts = {}) {
     const { length = 20, upper = true, lower = true, digits = true, symbols = true } = opts;
     const pools = [];
@@ -405,10 +429,12 @@ const Crypto = {
     if (symbols) pools.push('!@#$%^&*_-+=?');
     if (!pools.length) pools.push('abcdefghijkmnpqrstuvwxyz');
     const chars = pools.join('');
-    const arr = new Uint32Array(length + pools.length);
+    const arr   = new Uint32Array(length + pools.length);
     crypto.getRandomValues(arr);
+    // Guarantee at least one character from each required pool
     let result = pools.map((pool, i) => pool[arr[length + i] % pool.length]);
     for (let i = result.length; i < length; i++) result.push(chars[arr[i] % chars.length]);
+    // Fisher-Yates shuffle
     const shuf = new Uint32Array(length);
     crypto.getRandomValues(shuf);
     for (let i = result.length - 1; i > 0; i--) {
@@ -418,6 +444,7 @@ const Crypto = {
     return result.join('');
   },
 
+  // Score password strength (0-6) and return a label + colour
   strengthScore(pwd) {
     if (!pwd) return { score: 0, label: '', color: '' };
     let s = 0;
@@ -428,13 +455,13 @@ const Crypto = {
     if (/[0-9]/.test(pwd)) s++;
     if (/[^A-Za-z0-9]/.test(pwd)) s++;
     const map = [
-      { label: 'SLABĂ',     color: '#e05252' },
-      { label: 'SLABĂ',     color: '#e05252' },
-      { label: 'MEDIE',     color: '#e09152' },
-      { label: 'BUNĂ',      color: '#e8c96d' },
-      { label: 'PUTERNICĂ', color: '#4caf82' },
-      { label: 'EXCELENTĂ', color: '#4caf82' },
-      { label: 'EXCELENTĂ', color: '#4caf82' },
+      { label: 'VERY WEAK',  color: '#e05252' },
+      { label: 'WEAK',       color: '#e05252' },
+      { label: 'FAIR',       color: '#e09152' },
+      { label: 'GOOD',       color: '#e8c96d' },
+      { label: 'STRONG',     color: '#4caf82' },
+      { label: 'EXCELLENT',  color: '#4caf82' },
+      { label: 'EXCELLENT',  color: '#4caf82' },
     ];
     return { score: s, ...map[Math.min(s, 6)] };
   }
@@ -442,30 +469,34 @@ const Crypto = {
 
 // ════════════════════════════════════════════════
 // STORAGE KEYS
+// All localStorage keys are prefixed with "v_" to
+// avoid collisions with other apps on the same origin.
 // ════════════════════════════════════════════════
 const K = {
-  salt:      'v_salt',
-  data:      'v_data',
-  hasPin:    'v_pin',
-  settings:  'v_settings',
-  fails:     'v_fails',
-  lockUntil: 'v_lock',
-  pinLen:    'v_pinlen',
-  recovery:  'v_recovery',   // encrypted PIN stored with recovery key
+  salt:      'v_salt',       // vault encryption salt (base64)
+  data:      'v_data',       // encrypted vault blob
+  hasPin:    'v_pin',        // flag: vault has been set up
+  settings:  'v_settings',   // JSON settings object
+  fails:     'v_fails',      // wrong-PIN attempt counter
+  lockUntil: 'v_lock',       // timestamp for time-lock expiry
+  pinLen:    'v_pinlen',     // chosen PIN length (4 / 6 / 8)
+  recovery:  'v_recovery',   // encrypted PIN (recovery blob)
+  recSalt:   'v_rec_salt',   // dedicated salt for recovery blob
+  recMeta:   'v_recovery_meta', // plaintext question labels
 };
 
 // ════════════════════════════════════════════════
-// STATE
+// APPLICATION STATE
 // ════════════════════════════════════════════════
 let state = {
   entries:     [],
   pin:         null,
   unlocked:    false,
-  pinLength:   4,            // 4, 6 or 8
+  pinLength:   4,
   settings: {
-    lockAfter:    3,
-    wipeAfter:    5,
-    autoLockMins: 5,
+    lockAfter:    3,   // wrong PINs before time-lock
+    wipeAfter:    5,   // wrong PINs before data wipe (0 = disabled)
+    autoLockMins: 5,   // idle minutes before auto-lock (0 = never)
   },
   searchQuery: '',
   genOpts: { length: 20, upper: true, lower: true, digits: true, symbols: true },
@@ -473,7 +504,7 @@ let state = {
 };
 
 // ════════════════════════════════════════════════
-// SETTINGS
+// SETTINGS — load from / save to localStorage
 // ════════════════════════════════════════════════
 function loadSettings() {
   try {
@@ -481,20 +512,24 @@ function loadSettings() {
     state.settings = { ...state.settings, ...s };
   } catch(e) {}
   const pl = parseInt(localStorage.getItem(K.pinLen) || '0');
-  if ([4,6,8].includes(pl)) state.pinLength = pl;
+  if ([4, 6, 8].includes(pl)) state.pinLength = pl;
 }
+
 function saveSettings() {
   localStorage.setItem(K.settings, JSON.stringify(state.settings));
 }
 
 // ════════════════════════════════════════════════
 // VAULT I/O
+// The vault salt is generated once at setup and never changes.
+// All vault data is encrypted with (PIN + salt) → AES-256-GCM.
 // ════════════════════════════════════════════════
 function getSalt() {
   const b = localStorage.getItem(K.salt);
   if (!b) return null;
   return Uint8Array.from(atob(b), c => c.charCodeAt(0));
 }
+
 function createSalt() {
   const s = crypto.getRandomValues(new Uint8Array(16));
   localStorage.setItem(K.salt, btoa(String.fromCharCode(...s)));
@@ -503,8 +538,11 @@ function createSalt() {
 
 async function saveVault() {
   if (!state.pin) return;
-  let salt = getSalt() || createSalt();
-  const enc = await Crypto.encrypt(JSON.stringify({ v:2, entries: state.entries }), state.pin, salt);
+  const salt = getSalt() || createSalt();
+  const enc  = await Crypto.encrypt(
+    JSON.stringify({ v: 2, entries: state.entries }),
+    state.pin, salt
+  );
   localStorage.setItem(K.data, enc);
 }
 
@@ -517,41 +555,52 @@ async function loadVault(pin) {
 }
 
 // ════════════════════════════════════════════════
-// RECOVERY — PIN criptat cu răspunsurile la întrebări
+// RECOVERY SYSTEM
+// The PIN is encrypted separately using the answers to
+// two security questions as a passphrase.  A dedicated
+// salt (v_rec_salt) is used — completely independent from
+// the vault salt — so recovery works across PIN changes
+// and on fresh devices (if localStorage is migrated).
 // ════════════════════════════════════════════════
-// Deriva o cheie din concatenarea răspunsurilor (lowercase, trim)
-async function deriveRecoveryKey(answers) {
-  const combined = answers.map(a => a.trim().toLowerCase()).join('|');
-  const recSalt  = Uint8Array.from(atob(localStorage.getItem(K.salt) || btoa('defaultsalt')), c => c.charCodeAt(0));
-  return combined; // folosim ca "pin" în Crypto.encrypt, cu salt-ul existent
+function getRecoverySalt() {
+  const b = localStorage.getItem(K.recSalt);
+  if (!b) return null;
+  return Uint8Array.from(atob(b), c => c.charCodeAt(0));
+}
+
+function createRecoverySalt() {
+  const s = crypto.getRandomValues(new Uint8Array(16));
+  localStorage.setItem(K.recSalt, btoa(String.fromCharCode(...s)));
+  return s;
 }
 
 async function saveRecovery(pin, answers) {
-  const recKey = await deriveRecoveryKey(answers);
-  const salt   = getSalt() || createSalt();
-  const enc    = await Crypto.encrypt(pin, recKey, salt);
+  // Combine answers (trimmed, lowercase) as passphrase
+  const passphrase = answers.map(a => a.trim().toLowerCase()).join('|');
+  const salt       = getRecoverySalt() || createRecoverySalt();
+  const enc        = await Crypto.encrypt(pin, passphrase, salt);
   localStorage.setItem(K.recovery, enc);
 }
 
 async function recoverPin(answers) {
-  const recKey = await deriveRecoveryKey(answers);
-  const enc    = localStorage.getItem(K.recovery);
+  const passphrase = answers.map(a => a.trim().toLowerCase()).join('|');
+  const enc        = localStorage.getItem(K.recovery);
   if (!enc) throw new Error('no_recovery');
-  const salt = getSalt();
+  const salt = getRecoverySalt();
   if (!salt) throw new Error('no_salt');
-  const pin = await Crypto.decrypt(enc, recKey, salt);
-  return pin;
+  return Crypto.decrypt(enc, passphrase, salt);
 }
 
+// Security questions available during setup
 const SECURITY_QUESTIONS = [
-  'Care este numele primului tău animal de companie?',
-  'În ce oraș te-ai născut?',
-  'Care este numele de fată al mamei tale?',
-  'Care este numele școlii primare la care ai studiat?',
-  'Care este filmul tău preferat din copilărie?',
-  'Care este porecla ta din copilărie?',
-  'Care este marca primei tale mașini?',
-  'Care este mâncarea ta preferată?',
+  'What was the name of your first pet?',
+  'What city were you born in?',
+  'What is your mother\'s maiden name?',
+  'What is the name of your primary school?',
+  'What is your favourite childhood movie?',
+  'What was your childhood nickname?',
+  'What was the make of your first car?',
+  'What is your favourite food?',
 ];
 
 // ════════════════════════════════════════════════
@@ -563,27 +612,32 @@ function isTimeLocked() {
   localStorage.removeItem(K.lockUntil);
   return false;
 }
+
 function setTimeLock(ms) {
   localStorage.setItem(K.lockUntil, String(Date.now() + ms));
 }
+
 function getFailCount() {
   return parseInt(localStorage.getItem(K.fails) || '0');
 }
+
+// Record a failed PIN attempt; returns 'wiped', 'locked', or attempt count
 function recordFail() {
   const n = getFailCount() + 1;
   localStorage.setItem(K.fails, String(n));
   if (state.settings.wipeAfter && n >= state.settings.wipeAfter) {
     localStorage.clear();
-    showToast('⚠️ Date șterse pentru securitate', 3000, '#e05252');
+    showToast('⚠️ All data wiped for security', 3000, '#e05252');
     setTimeout(() => location.reload(), 1000);
     return 'wiped';
   }
   if (n >= state.settings.lockAfter) {
-    setTimeLock(5 * 60 * 1000);
+    setTimeLock(5 * 60 * 1000); // 5-minute time-lock
     return 'locked';
   }
   return n;
 }
+
 function clearFails() {
   localStorage.removeItem(K.fails);
   localStorage.removeItem(K.lockUntil);
@@ -591,6 +645,8 @@ function clearFails() {
 
 // ════════════════════════════════════════════════
 // INACTIVITY AUTO-LOCK
+// Resets a timer on every user interaction; when it
+// expires the vault is locked and state is cleared.
 // ════════════════════════════════════════════════
 function resetInactivityTimer() {
   clearTimeout(state.inactivityTimer);
@@ -599,10 +655,11 @@ function resetInactivityTimer() {
   if (!mins) return;
   state.inactivityTimer = setTimeout(() => {
     doLock();
-    showToast('🔒 Blocat automat după inactivitate');
+    showToast('🔒 Auto-locked after inactivity');
   }, mins * 60 * 1000);
 }
-['click','keydown','touchstart'].forEach(ev =>
+
+['click', 'keydown', 'touchstart'].forEach(ev =>
   document.addEventListener(ev, resetInactivityTimer, { passive: true })
 );
 
@@ -615,13 +672,13 @@ function doLock() {
 }
 
 // ════════════════════════════════════════════════
-// TOAST
+// TOAST NOTIFICATION
 // ════════════════════════════════════════════════
 let toastTimer;
 function showToast(msg, dur = 1800, color) {
   const t = document.getElementById('toast');
-  t.textContent   = msg;
-  t.style.color   = color || 'var(--green)';
+  t.textContent = msg;
+  t.style.color = color || 'var(--green)';
   t.classList.add('show');
   clearTimeout(toastTimer);
   toastTimer = setTimeout(() => t.classList.remove('show'), dur);
@@ -630,20 +687,21 @@ function showToast(msg, dur = 1800, color) {
 async function copyText(text) {
   try {
     await navigator.clipboard.writeText(text);
-    showToast('✓ Copiat în clipboard');
+    showToast('✓ Copied to clipboard');
   } catch(e) {
-    showToast('❌ Nu s-a putut copia', 2000, '#e05252');
+    showToast('❌ Could not copy', 2000, '#e05252');
   }
 }
 
 // ════════════════════════════════════════════════
-// HELPERS
+// UTILITY HELPERS
 // ════════════════════════════════════════════════
 function esc(s) {
   return String(s).replace(/[&<>"']/g, m =>
-    ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[m])
+    ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[m])
   );
 }
+
 function initials(s) { return (s || '?').trim().charAt(0).toUpperCase(); }
 
 function pinRegex(len) { return new RegExp('^\\d{' + len + '}$'); }
@@ -660,30 +718,31 @@ function buildPinDots(len, filled) {
 const shell = document.getElementById('shell');
 
 function render() {
-  if (isTimeLocked()) { renderTimeLocked(); return; }
-  if (!localStorage.getItem(K.hasPin)) { renderSetup(); return; }
-  if (!state.unlocked) { renderLogin(); return; }
+  if (isTimeLocked())                    { renderTimeLocked(); return; }
+  if (!localStorage.getItem(K.hasPin))   { renderSetup();     return; }
+  if (!state.unlocked)                   { renderLogin();      return; }
   renderApp();
 }
 
 // ════════════════════════════════════════════════
-// SETUP — alege lungime PIN + întrebări securitate
+// SETUP SCREEN
+// First-run wizard: choose PIN length, set PIN,
+// and configure two security questions for recovery.
 // ════════════════════════════════════════════════
 function renderSetup() {
-  const hasRecovery = !!localStorage.getItem(K.recovery);
   shell.innerHTML = `
     <div class="card">
       <div class="lock-visual">
         <span class="lock-icon">🔐</span>
-        <div class="lock-title">Creează seiful tău</div>
-        <div class="lock-subtitle">Alege lungimea PIN-ului și configurează securitatea</div>
+        <div class="lock-title">Create your vault</div>
+        <div class="lock-subtitle">Choose a PIN length and set up security</div>
       </div>
 
-      <div class="section-label" style="margin-top:8px;">Lungime PIN</div>
+      <div class="section-label" style="margin-top:8px;">PIN length</div>
       <div class="pin-length-selector">
-        <button class="pin-len-btn ${state.pinLength===4?'active':''}" data-len="4">4 cifre</button>
-        <button class="pin-len-btn ${state.pinLength===6?'active':''}" data-len="6">6 cifre</button>
-        <button class="pin-len-btn ${state.pinLength===8?'active':''}" data-len="8">8 cifre</button>
+        <button class="pin-len-btn ${state.pinLength===4?'active':''}" data-len="4">4 digits</button>
+        <button class="pin-len-btn ${state.pinLength===6?'active':''}" data-len="6">6 digits</button>
+        <button class="pin-len-btn ${state.pinLength===8?'active':''}" data-len="8">8 digits</button>
       </div>
 
       <div class="pin-display" id="pinDots">${buildPinDots(state.pinLength, 0)}</div>
@@ -691,54 +750,57 @@ function renderSetup() {
       <div class="field">
         <div class="input-wrap">
           <input type="password" id="newPin" inputmode="numeric"
-            maxlength="${state.pinLength}" placeholder="PIN nou — ${state.pinLength} cifre" class="has-icon">
+            maxlength="${state.pinLength}" placeholder="New PIN — ${state.pinLength} digits" class="has-icon">
           <button class="eye-btn" id="eye1" tabindex="-1">👁</button>
         </div>
       </div>
       <div class="field">
         <div class="input-wrap">
           <input type="password" id="confirmPin" inputmode="numeric"
-            maxlength="${state.pinLength}" placeholder="Confirmă PIN-ul">
+            maxlength="${state.pinLength}" placeholder="Confirm PIN">
         </div>
       </div>
 
-      <div class="section-label" style="margin-top:4px;">Întrebări de securitate <span style="font-size:0.6rem;color:var(--muted)">(pentru recuperare PIN)</span></div>
-      <div class="recovery-info">
-        <strong>De ce sunt necesare?</strong> Dacă uiți PIN-ul, poți răspunde la aceste 2 întrebări pentru a-ți recupera accesul la seif fără să pierzi datele.
+      <div class="section-label" style="margin-top:4px;">
+        Security questions <span style="font-size:0.6rem;color:var(--muted)">(for PIN recovery)</span>
+      </div>
+      <div class="info-box">
+        <strong>Why are these needed?</strong> If you forget your PIN, you can answer these
+        2 questions to regain access to your vault without losing any data.
       </div>
 
       <div class="field">
-        <label>Întrebarea 1</label>
+        <label>Question 1</label>
         <select class="select-mini" id="sq1" style="width:100%;padding:10px 12px;margin-bottom:8px;">
           ${SECURITY_QUESTIONS.map((q,i) => `<option value="${i}">${q}</option>`).join('')}
         </select>
         <div class="input-wrap">
-          <input type="text" id="sa1" placeholder="Răspunsul tău (nu contează majusculele)">
+          <input type="text" id="sa1" placeholder="Your answer (case-insensitive)">
         </div>
       </div>
       <div class="field">
-        <label>Întrebarea 2</label>
+        <label>Question 2</label>
         <select class="select-mini" id="sq2" style="width:100%;padding:10px 12px;margin-bottom:8px;">
           ${SECURITY_QUESTIONS.map((q,i) => `<option value="${i}" ${i===1?'selected':''}>${q}</option>`).join('')}
         </select>
         <div class="input-wrap">
-          <input type="text" id="sa2" placeholder="Răspunsul tău (nu contează majusculele)">
+          <input type="text" id="sa2" placeholder="Your answer (case-insensitive)">
         </div>
       </div>
 
-      <button class="btn btn-primary" id="setupBtn" style="margin-top:4px;">Activează seiful →</button>
+      <button class="btn btn-primary" id="setupBtn" style="margin-top:4px;">Activate vault →</button>
     </div>
   `;
 
   const newPin = document.getElementById('newPin');
   const dots   = document.querySelectorAll('.pin-dot');
 
-  // Pin length selector
+  // Re-render when user picks a different PIN length
   document.querySelectorAll('.pin-len-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       state.pinLength = parseInt(btn.dataset.len);
       localStorage.setItem(K.pinLen, String(state.pinLength));
-      renderSetup(); // re-render cu noua lungime
+      renderSetup();
     });
   });
 
@@ -762,12 +824,12 @@ function renderSetup() {
 
     if (!pinRegex(state.pinLength).test(p)) {
       flashDots(dots, 'error');
-      showToast(`❌ PIN-ul trebuie să aibă exact ${state.pinLength} cifre`, 2000, '#e05252');
+      showToast(`❌ PIN must be exactly ${state.pinLength} digits`, 2000, '#e05252');
       return;
     }
-    if (p !== c) { showToast('❌ PIN-urile nu coincid', 2000, '#e05252'); return; }
-    if (!a1 || !a2) { showToast('❌ Completează ambele răspunsuri de securitate', 2000, '#e05252'); return; }
-    if (q1 === q2)  { showToast('❌ Alege întrebări diferite', 2000, '#e05252'); return; }
+    if (p !== c)   { showToast('❌ PINs do not match', 2000, '#e05252'); return; }
+    if (!a1 || !a2){ showToast('❌ Fill in both security answers', 2000, '#e05252'); return; }
+    if (q1 === q2) { showToast('❌ Choose two different questions', 2000, '#e05252'); return; }
 
     createSalt();
     state.pin     = p;
@@ -776,9 +838,11 @@ function renderSetup() {
     localStorage.setItem(K.hasPin, '1');
     localStorage.setItem(K.pinLen, String(state.pinLength));
 
-    // Salvează întrebările (textele, nu indexul) și recovery-ul criptat
-    const recoveryMeta = { q1: SECURITY_QUESTIONS[q1], q2: SECURITY_QUESTIONS[q2] };
-    localStorage.setItem('v_recovery_meta', JSON.stringify(recoveryMeta));
+    // Store question labels (not indices) and encrypted recovery blob
+    localStorage.setItem(K.recMeta, JSON.stringify({
+      q1: SECURITY_QUESTIONS[q1],
+      q2: SECURITY_QUESTIONS[q2],
+    }));
     await saveRecovery(p, [a1, a2]);
 
     clearFails();
@@ -789,7 +853,7 @@ function renderSetup() {
 }
 
 // ════════════════════════════════════════════════
-// LOGIN
+// LOGIN SCREEN
 // ════════════════════════════════════════════════
 function renderLogin() {
   const fails     = getFailCount();
@@ -800,28 +864,28 @@ function renderLogin() {
     <div class="card">
       <div class="lock-visual">
         <span class="lock-icon">🔒</span>
-        <div class="lock-title">Deblochează seiful</div>
-        <div class="lock-subtitle">Introdu PIN-ul de ${len} cifre</div>
+        <div class="lock-title">Unlock your vault</div>
+        <div class="lock-subtitle">Enter your ${len}-digit PIN</div>
       </div>
       <div class="pin-display" id="pinDots">${buildPinDots(len, 0)}</div>
       <div class="field">
         <div class="input-wrap">
           <input type="password" id="loginPin" inputmode="numeric"
-            maxlength="${len}" placeholder="PIN — ${len} cifre" autofocus class="has-icon">
+            maxlength="${len}" placeholder="PIN — ${len} digits" autofocus class="has-icon">
           <button class="eye-btn" id="eye2" tabindex="-1">👁</button>
         </div>
       </div>
       ${fails > 0 ? `<p style="text-align:center;color:var(--red);font-size:0.8rem;margin-bottom:12px;">
-        ⚠️ ${remaining} ${remaining === 1 ? 'încercare rămasă' : 'încercări rămase'}
+        ⚠️ ${remaining} ${remaining === 1 ? 'attempt remaining' : 'attempts remaining'}
       </p>` : ''}
-      <button class="btn btn-primary" id="unlockBtn">Deblochează →</button>
-      <button class="btn btn-ghost" id="forgotBtn" style="margin-top:10px;font-size:0.82rem;">🔑 Am uitat PIN-ul</button>
+      <button class="btn btn-primary" id="unlockBtn">Unlock →</button>
+      <button class="btn btn-ghost" id="forgotBtn" style="margin-top:10px;font-size:0.82rem;">🔑 Forgot PIN</button>
       <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border);text-align:center;">
         <div style="font-size:0.72rem;color:var(--muted);margin-bottom:8px;font-family:var(--mono);letter-spacing:0.05em;">
-          Aplicație nouă / date corupte?
+          New device / corrupted data?
         </div>
         <button class="btn btn-danger btn-sm" id="resetAllBtn" style="width:auto;margin:0 auto;">
-          💀 Șterge tot și reconfigurează
+          💀 Wipe and reconfigure
         </button>
       </div>
     </div>
@@ -833,6 +897,7 @@ function renderLogin() {
   pin.addEventListener('input', () => {
     const n = pin.value.length;
     dots.forEach((d, i) => d.classList.toggle('filled', i < n));
+    // Auto-submit when PIN is complete
     if (n === len) setTimeout(() => document.getElementById('unlockBtn')?.click(), 100);
   });
   toggleEye('eye2', 'loginPin');
@@ -853,7 +918,7 @@ function renderLogin() {
       dots.forEach(d => d.classList.remove('filled'));
       const res = recordFail();
       if (res === 'locked' || res === 'wiped') { render(); return; }
-      showToast(`❌ PIN greșit — mai ai ${state.settings.lockAfter - getFailCount()} încercări`, 2500, '#e05252');
+      showToast(`❌ Wrong PIN — ${state.settings.lockAfter - getFailCount()} attempts left`, 2500, '#e05252');
     }
   });
 
@@ -861,28 +926,28 @@ function renderLogin() {
 
   document.getElementById('resetAllBtn').addEventListener('click', () => {
     openModal(`
-      <div class="modal-title" style="color:var(--red)">💀 Resetare completă</div>
+      <div class="modal-title" style="color:var(--red)">💀 Full reset</div>
       <p style="color:var(--muted);margin-bottom:12px;">
-        Aceasta va șterge <strong style="color:var(--red)">toate datele</strong> salvate
-        (parole, PIN, setări, întrebări de securitate) și vei putea configura aplicația de la zero.
+        This will permanently delete <strong style="color:var(--red)">all saved data</strong>
+        (passwords, PIN, settings, security questions) so you can start fresh.
       </p>
       <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">
-        Tastează <strong style="color:var(--red)">RESET</strong> pentru a confirma:
+        Type <strong style="color:var(--red)">RESET</strong> to confirm:
       </p>
       <div class="field">
         <input type="text" id="resetConfirm" placeholder="RESET" autofocus>
       </div>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-danger" id="resetExec"   style="flex:1;">Șterge și reconfigurează</button>
-        <button class="btn btn-ghost"  id="resetCancel" style="flex:1;">Anulează</button>
+        <button class="btn btn-danger" id="resetExec"   style="flex:1;">Wipe and reconfigure</button>
+        <button class="btn btn-ghost"  id="resetCancel" style="flex:1;">Cancel</button>
       </div>
     `);
     document.getElementById('resetExec').addEventListener('click', () => {
       if (document.getElementById('resetConfirm').value !== 'RESET') {
-        showToast('❌ Tastează exact: RESET', 2000, '#e05252'); return;
+        showToast('❌ Type exactly: RESET', 2000, '#e05252'); return;
       }
       localStorage.clear();
-      showToast('✓ Date șterse — configurează un PIN nou', 2500, '#4caf82');
+      showToast('✓ Data cleared — set up a new PIN', 2500, '#4caf82');
       setTimeout(() => { closeAllModals(); render(); }, 800);
     });
     document.getElementById('resetCancel').addEventListener('click', closeAllModals);
@@ -890,40 +955,38 @@ function renderLogin() {
 }
 
 // ════════════════════════════════════════════════
-// FORGOT PIN — recuperare prin întrebări de securitate
+// FORGOT PIN — recovery via security questions
 // ════════════════════════════════════════════════
 function showForgotPinModal() {
-  const meta = JSON.parse(localStorage.getItem('v_recovery_meta') || 'null');
+  const meta = JSON.parse(localStorage.getItem(K.recMeta) || 'null');
   if (!meta) {
-    showToast('❌ Nu există date de recuperare salvate', 2500, '#e05252');
+    showToast('❌ No recovery data found — cannot recover PIN', 2500, '#e05252');
     return;
   }
 
   const overlay = openModal(`
-    <div class="modal-title">🔑 Recuperare acces</div>
-    <div class="recovery-info">
-      Răspunde la întrebările de securitate pentru a-ți recupera accesul. Răspunsurile nu sunt sensibile la majuscule.
+    <div class="modal-title">🔑 Recover access</div>
+    <div class="info-box">
+      Answer your security questions to recover your PIN.
+      Answers are not case-sensitive.
     </div>
-
     <div class="field">
       <label>${esc(meta.q1)}</label>
       <div class="input-wrap">
-        <input type="text" id="ra1" placeholder="Răspunsul tău">
+        <input type="text" id="ra1" placeholder="Your answer">
       </div>
     </div>
     <div class="field">
       <label>${esc(meta.q2)}</label>
       <div class="input-wrap">
-        <input type="text" id="ra2" placeholder="Răspunsul tău">
+        <input type="text" id="ra2" placeholder="Your answer">
       </div>
     </div>
-
-    <div class="divider">sau</div>
-    <button class="btn btn-danger" id="wipeInstead" style="margin-bottom:8px;">💀 Șterge seiful și resetează</button>
-
+    <div class="divider">or</div>
+    <button class="btn btn-danger" id="wipeInstead" style="margin-bottom:8px;">💀 Wipe vault and reset</button>
     <div style="display:flex;gap:8px;margin-top:4px;">
-      <button class="btn btn-primary" id="recoverBtn" style="flex:1;">Verifică răspunsurile →</button>
-      <button class="btn btn-ghost" id="recoverCancel" style="flex:1;">Anulează</button>
+      <button class="btn btn-primary" id="recoverBtn" style="flex:1;">Verify answers →</button>
+      <button class="btn btn-ghost"   id="recoverCancel" style="flex:1;">Cancel</button>
     </div>
   `);
 
@@ -931,15 +994,14 @@ function showForgotPinModal() {
     const a1 = document.getElementById('ra1').value;
     const a2 = document.getElementById('ra2').value;
     if (!a1.trim() || !a2.trim()) {
-      showToast('❌ Completează ambele răspunsuri', 2000, '#e05252'); return;
+      showToast('❌ Fill in both answers', 2000, '#e05252'); return;
     }
     try {
       const recoveredPin = await recoverPin([a1, a2]);
-      // Răspunsuri corecte — afișăm PIN-ul recuperat și deblocăm
       overlay.remove();
       showRecoveredPinModal(recoveredPin);
     } catch(err) {
-      showToast('❌ Răspunsuri incorecte', 2500, '#e05252');
+      showToast('❌ Incorrect answers', 2500, '#e05252');
     }
   });
 
@@ -951,18 +1013,19 @@ function showForgotPinModal() {
   document.getElementById('recoverCancel').addEventListener('click', () => overlay.remove());
 }
 
+// Show the recovered PIN and allow immediate unlock
 function showRecoveredPinModal(recoveredPin) {
   const overlay = openModal(`
-    <div class="modal-title" style="color:var(--green)">✓ Acces recuperat</div>
-    <div class="recovery-info" style="border-color:#4caf8230;background:#4caf8208;">
-      Răspunsurile sunt corecte. PIN-ul tău este afișat mai jos. Notează-l într-un loc sigur!
+    <div class="modal-title" style="color:var(--green)">✓ Access recovered</div>
+    <div class="info-box" style="border-color:#4caf8230;background:#4caf8208;">
+      Your answers are correct. Your PIN is shown below — note it somewhere safe!
     </div>
     <div class="reveal-box" style="margin:16px 0;">
-      <div class="reveal-site">PIN-ul tău</div>
+      <div class="reveal-site">Your PIN</div>
       <div class="reveal-password" style="font-size:1.8rem;letter-spacing:0.3em;">${esc(recoveredPin)}</div>
     </div>
-    <button class="btn btn-primary" id="recoverUnlock">Deblochează seiful →</button>
-    <button class="btn btn-ghost" id="recoverClose" style="margin-top:8px;">Închide</button>
+    <button class="btn btn-primary" id="recoverUnlock">Unlock vault →</button>
+    <button class="btn btn-ghost"   id="recoverClose" style="margin-top:8px;">Close</button>
   `);
 
   document.getElementById('recoverUnlock').addEventListener('click', async () => {
@@ -975,7 +1038,7 @@ function showRecoveredPinModal(recoveredPin) {
       resetInactivityTimer();
       render();
     } catch(err) {
-      showToast('❌ Eroare la deschiderea seifului', 2000, '#e05252');
+      showToast('❌ Error opening vault', 2000, '#e05252');
     }
   });
 
@@ -983,30 +1046,35 @@ function showRecoveredPinModal(recoveredPin) {
 }
 
 // ════════════════════════════════════════════════
-// TIME-LOCKED
+// TIME-LOCKED SCREEN
+// Shown after too many wrong PINs; counts down until
+// the lock expires, then redirects back to login.
 // ════════════════════════════════════════════════
 function renderTimeLocked() {
   const lockUntilTs = parseInt(localStorage.getItem(K.lockUntil) || '0');
   shell.innerHTML = `
     <div class="card" style="text-align:center;">
       <span class="lock-icon" style="font-size:2.5rem;display:block;margin-bottom:12px;">🚫</span>
-      <div class="lock-title" style="color:var(--red)">Aplicație blocată temporar</div>
-      <div class="lock-subtitle">Prea multe tentative greșite. Reîncercați după:</div>
+      <div class="lock-title" style="color:var(--red)">App temporarily locked</div>
+      <div class="lock-subtitle">Too many wrong attempts. Try again after:</div>
       <div class="timer-display" id="countdown">--:--</div>
-      <button class="btn btn-ghost" style="margin-top:8px;" onclick="render()">Reîncarcă</button>
+      <button class="btn btn-ghost" style="margin-top:8px;" onclick="render()">Refresh</button>
       <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:16px;">
-        <button class="btn btn-ghost" id="forgotFromLock" style="font-size:0.82rem;">Am uitat PIN-ul — recuperare acces</button>
+        <button class="btn btn-ghost" id="forgotFromLock" style="font-size:0.82rem;">
+          Forgot PIN — recover access
+        </button>
       </div>
     </div>
   `;
 
   document.getElementById('forgotFromLock').addEventListener('click', showForgotPinModal);
 
+  // Live countdown ticker
   const cd = document.getElementById('countdown');
   const tick = () => {
     const rem = Math.max(0, lockUntilTs - Date.now());
-    const m = String(Math.floor(rem / 60000)).padStart(2, '0');
-    const s = String(Math.floor((rem % 60000) / 1000)).padStart(2, '0');
+    const m   = String(Math.floor(rem / 60000)).padStart(2, '0');
+    const s   = String(Math.floor((rem % 60000) / 1000)).padStart(2, '0');
     if (cd) cd.textContent = `${m}:${s}`;
     if (rem > 0) setTimeout(tick, 1000); else render();
   };
@@ -1014,28 +1082,30 @@ function renderTimeLocked() {
 }
 
 // ════════════════════════════════════════════════
-// MAIN APP
+// MAIN APP SCREEN
 // ════════════════════════════════════════════════
 function renderApp() {
   shell.innerHTML = `
     <div class="topbar">
       <div>
-        <div class="topbar-title">Seiful meu</div>
+        <div class="topbar-title">My vault</div>
         <div style="font-size:0.75rem;color:var(--muted);margin-top:2px;">
-          <span class="badge">${state.entries.length} intrări</span>
+          <span class="badge">${state.entries.length} ${state.entries.length === 1 ? 'entry' : 'entries'}</span>
         </div>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-ghost btn-sm btn-icon" id="addBtn"      title="Adaugă">＋</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="addBtn"      title="Add entry">＋</button>
         <button class="btn btn-ghost btn-sm btn-icon" id="genBtn"      title="Generator">🎲</button>
-        <button class="btn btn-ghost btn-sm btn-icon" id="settingsBtn" title="Setări">⚙</button>
-        <button class="btn btn-ghost btn-sm btn-icon" id="lockBtn"     title="Blochează">🔒</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="settingsBtn" title="Settings">⚙</button>
+        <button class="btn btn-ghost btn-sm btn-icon" id="lockBtn"     title="Lock">🔒</button>
       </div>
     </div>
 
     <div class="search-wrap">
       <span class="search-icon">🔍</span>
-      <input type="text" id="searchInput" placeholder="Caută după site sau email…" value="${esc(state.searchQuery)}">
+      <input type="text" id="searchInput"
+        placeholder="Search by site or email…"
+        value="${esc(state.searchQuery)}">
     </div>
 
     <div id="entriesList"></div>
@@ -1043,10 +1113,10 @@ function renderApp() {
     <div style="margin-top:20px;">
       <div class="section-label">Backup</div>
       <div style="display:flex;gap:8px;">
-        <button class="btn btn-ghost btn-sm" id="exportBtn" style="flex:1;">📤 Exportă</button>
+        <button class="btn btn-ghost btn-sm" id="exportBtn" style="flex:1;">📤 Export</button>
         <label class="btn btn-ghost btn-sm" style="flex:1;cursor:pointer;margin:0;">
-          📥 Importă
-          <input type="file" id="importFile" accept=".vault" style="display:none;">
+          📥 Import
+          <input type="file" id="importFile" accept=".vault,.txt" style="display:none;">
         </label>
       </div>
     </div>
@@ -1058,11 +1128,11 @@ function renderApp() {
     state.searchQuery = e.target.value;
     renderEntries();
   });
-  document.getElementById('addBtn').addEventListener('click', () => showEntryModal(null));
-  document.getElementById('genBtn').addEventListener('click', showGeneratorModal);
+  document.getElementById('addBtn').addEventListener('click',      () => showEntryModal(null));
+  document.getElementById('genBtn').addEventListener('click',      showGeneratorModal);
   document.getElementById('settingsBtn').addEventListener('click', showSettingsModal);
-  document.getElementById('lockBtn').addEventListener('click', doLock);
-  document.getElementById('exportBtn').addEventListener('click', exportVault);
+  document.getElementById('lockBtn').addEventListener('click',     doLock);
+  document.getElementById('exportBtn').addEventListener('click',   exportVault);
   document.getElementById('importFile').addEventListener('change', importVault);
 }
 
@@ -1082,7 +1152,10 @@ function renderEntries() {
     list.innerHTML = `
       <div class="empty">
         <div class="empty-icon">${q ? '🔍' : '🗝️'}</div>
-        <p>${q ? 'Niciun rezultat pentru "' + esc(state.searchQuery) + '"' : 'Nicio parolă salvată.<br>Apasă ＋ pentru a adăuga.'}</p>
+        <p>${q
+          ? `No results for "${esc(state.searchQuery)}"`
+          : 'No passwords saved.<br>Press ＋ to add one.'
+        }</p>
       </div>`;
     return;
   }
@@ -1098,10 +1171,10 @@ function renderEntries() {
         <div class="entry-email">${esc(entry.email)}</div>
       </div>
       <div class="entry-actions">
-        <button class="btn btn-ghost btn-icon" data-copy="${entry.id}" title="Copiază parola">📋</button>
-        <button class="btn btn-ghost btn-icon" data-view="${entry.id}" title="Vezi parola">👁</button>
-        <button class="btn btn-ghost btn-icon" data-edit="${entry.id}" title="Editează">✏️</button>
-        <button class="btn btn-danger btn-icon" data-del="${entry.id}" title="Șterge">🗑</button>
+        <button class="btn btn-ghost btn-icon" data-copy="${entry.id}" title="Copy password">📋</button>
+        <button class="btn btn-ghost btn-icon" data-view="${entry.id}" title="View password">👁</button>
+        <button class="btn btn-ghost btn-icon" data-edit="${entry.id}" title="Edit">✏️</button>
+        <button class="btn btn-danger btn-icon" data-del="${entry.id}" title="Delete">🗑</button>
       </div>
     `;
     list.appendChild(div);
@@ -1138,9 +1211,11 @@ function openModal(html) {
   overlay.className = 'overlay';
   overlay.innerHTML = `<div class="modal">${html}</div>`;
   document.body.appendChild(overlay);
+  // Close on backdrop click
   overlay.addEventListener('click', e => {
     if (e.target === overlay) overlay.remove();
   });
+  // Close on Escape key
   const escFn = e => {
     if (e.key === 'Escape') { overlay.remove(); document.removeEventListener('keydown', escFn); }
   };
@@ -1153,41 +1228,49 @@ function closeAllModals() {
 }
 
 // ════════════════════════════════════════════════
-// ADD / EDIT ENTRY
+// ADD / EDIT ENTRY MODAL
 // ════════════════════════════════════════════════
 function showEntryModal(entry) {
-  const isEdit = !!entry;
+  const isEdit  = !!entry;
   const overlay = openModal(`
-    <div class="modal-title">${isEdit ? '✏️ Editează intrare' : '➕ Intrare nouă'}</div>
+    <div class="modal-title">${isEdit ? '✏️ Edit entry' : '➕ New entry'}</div>
     <div class="field">
-      <label>Site / Platformă</label>
+      <label>Site / Platform</label>
       <div class="input-wrap">
-        <input type="text" id="mSite" placeholder="ex: Instagram, Gmail, BRD…" value="${isEdit ? esc(entry.site) : ''}">
+        <input type="text" id="mSite"
+          placeholder="e.g. Instagram, Gmail, Netflix…"
+          value="${isEdit ? esc(entry.site) : ''}">
       </div>
     </div>
     <div class="field">
       <label>Email / Username</label>
       <div class="input-wrap">
-        <input type="email" id="mEmail" placeholder="email@exemplu.com" value="${isEdit ? esc(entry.email) : ''}">
+        <input type="email" id="mEmail"
+          placeholder="email@example.com"
+          value="${isEdit ? esc(entry.email) : ''}">
       </div>
     </div>
     <div class="field">
-      <label>Parolă</label>
+      <label>Password</label>
       <div class="input-wrap">
-        <input type="password" id="mPassword" placeholder="Parola secretă" value="${isEdit ? esc(entry.password) : ''}" class="has-icon">
+        <input type="password" id="mPassword"
+          placeholder="Secret password"
+          value="${isEdit ? esc(entry.password) : ''}" class="has-icon">
         <button class="eye-btn" id="mEye">👁</button>
       </div>
       <div class="strength-wrap">
-        <div class="strength-bar"><div class="strength-fill" id="strengthFill" style="width:0%;background:var(--border)"></div></div>
+        <div class="strength-bar">
+          <div class="strength-fill" id="strengthFill" style="width:0%;background:var(--border)"></div>
+        </div>
         <div class="strength-label" id="strengthLabel">—</div>
       </div>
     </div>
     <div id="mDupWarn" style="display:none;color:var(--red);font-size:0.82rem;margin-bottom:8px;"></div>
     <div style="display:flex;gap:10px;margin-top:4px;">
-      <button class="btn btn-ghost btn-sm" id="mGen" style="flex:none;">🎲 Generează</button>
-      <button class="btn btn-primary" id="mSave" style="flex:1;">💾 Salvează</button>
+      <button class="btn btn-ghost btn-sm" id="mGen" style="flex:none;">🎲 Generate</button>
+      <button class="btn btn-primary" id="mSave" style="flex:1;">💾 Save</button>
     </div>
-    <button class="btn btn-ghost" id="mCancel" style="margin-top:8px;">Anulează</button>
+    <button class="btn btn-ghost" id="mCancel" style="margin-top:8px;">Cancel</button>
   `);
 
   toggleEye('mEye', 'mPassword');
@@ -1221,16 +1304,18 @@ function showEntryModal(entry) {
     const warn  = document.getElementById('mDupWarn');
 
     if (!site || !email || !pwd) {
-      showToast('❌ Completează toate câmpurile', 2000, '#e05252'); return;
+      showToast('❌ Fill in all fields', 2000, '#e05252'); return;
     }
+
+    // Duplicate check (same site + same email, different id when editing)
     const dup = state.entries.find(e =>
-      e.site.toLowerCase() === site.toLowerCase() &&
+      e.site.toLowerCase()  === site.toLowerCase()  &&
       e.email.toLowerCase() === email.toLowerCase() &&
       (!isEdit || e.id !== entry.id)
     );
     if (dup) {
       warn.style.display = 'block';
-      warn.textContent = `⚠️ Există deja o intrare pentru "${site}" cu acest email.`;
+      warn.textContent   = `⚠️ An entry for "${site}" with this email already exists.`;
       return;
     }
 
@@ -1238,35 +1323,45 @@ function showEntryModal(entry) {
       const i = state.entries.findIndex(e => e.id === entry.id);
       if (i !== -1) state.entries[i] = { ...entry, site, email, password: pwd };
     } else {
-      state.entries.push({ id: crypto.randomUUID(), site, email, password: pwd, created: Date.now() });
+      state.entries.push({
+        id:      crypto.randomUUID(),
+        site,
+        email,
+        password: pwd,
+        created:  Date.now(),
+      });
     }
+
     await saveVault();
     closeAllModals();
     renderEntries();
     const badge = document.querySelector('.badge');
-    if (badge) badge.textContent = state.entries.length + ' intrări';
-    showToast(isEdit ? '✓ Actualizat' : '✓ Salvat');
+    if (badge) badge.textContent = state.entries.length + (state.entries.length === 1 ? ' entry' : ' entries');
+    showToast(isEdit ? '✓ Updated' : '✓ Saved');
   });
 
   document.getElementById('mCancel').addEventListener('click', () => overlay.remove());
 }
 
 // ════════════════════════════════════════════════
-// REVEAL MODAL
+// REVEAL PASSWORD MODAL
 // ════════════════════════════════════════════════
 function showRevealModal(entry) {
   const overlay = openModal(`
-    <div class="modal-title">🔑 Parolă</div>
+    <div class="modal-title">🔑 Password</div>
     <div class="reveal-box">
       <div class="reveal-site">${esc(entry.site)}</div>
-      <div class="reveal-password" id="revealPwd" style="filter:blur(6px);cursor:pointer;" title="Click pentru a vedea">
+      <div class="reveal-password" id="revealPwd"
+        style="filter:blur(6px);cursor:pointer;" title="Click to reveal">
         ${esc(entry.password)}
       </div>
-      <div style="font-size:0.75rem;color:var(--muted);margin-top:10px;">Click pe parolă pentru a o afișa</div>
+      <div style="font-size:0.75rem;color:var(--muted);margin-top:10px;">
+        Click the password to reveal it
+      </div>
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-primary" id="copyReveal">📋 Copiază parola</button>
-      <button class="btn btn-ghost" id="closeReveal">Închide</button>
+      <button class="btn btn-primary" id="copyReveal">📋 Copy password</button>
+      <button class="btn btn-ghost"   id="closeReveal">Close</button>
     </div>
   `);
 
@@ -1284,21 +1379,21 @@ function showRevealModal(entry) {
 }
 
 // ════════════════════════════════════════════════
-// DELETE CONFIRM
+// DELETE CONFIRMATION
 // ════════════════════════════════════════════════
 function confirmDelete(id) {
   const entry = state.entries.find(e => e.id === id);
   if (!entry) return;
   const overlay = openModal(`
-    <div class="modal-title" style="color:var(--red)">🗑 Confirmare ștergere</div>
+    <div class="modal-title" style="color:var(--red)">🗑 Confirm deletion</div>
     <p style="margin-bottom:20px;color:var(--muted);">
-      Ești sigur că vrei să ștergi parola pentru
+      Are you sure you want to delete the password for
       <strong style="color:var(--text);">${esc(entry.site)}</strong>?
-      Această acțiune este ireversibilă.
+      This action is irreversible.
     </p>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-danger" id="confirmDel" style="flex:1;">Da, șterge</button>
-      <button class="btn btn-ghost" id="cancelDel"  style="flex:1;">Anulează</button>
+      <button class="btn btn-danger" id="confirmDel" style="flex:1;">Yes, delete</button>
+      <button class="btn btn-ghost"  id="cancelDel"  style="flex:1;">Cancel</button>
     </div>
   `);
 
@@ -1308,24 +1403,24 @@ function confirmDelete(id) {
     overlay.remove();
     renderEntries();
     const badge = document.querySelector('.badge');
-    if (badge) badge.textContent = state.entries.length + ' intrări';
-    showToast('🗑 Șters');
+    if (badge) badge.textContent = state.entries.length + (state.entries.length === 1 ? ' entry' : ' entries');
+    showToast('🗑 Deleted');
   });
   document.getElementById('cancelDel').addEventListener('click', () => overlay.remove());
 }
 
 // ════════════════════════════════════════════════
-// GENERATOR MODAL
+// PASSWORD GENERATOR MODAL
 // ════════════════════════════════════════════════
 function showGeneratorModal() {
-  const o = state.genOpts;
+  const o       = state.genOpts;
   const overlay = openModal(`
-    <div class="modal-title">🎲 Generator de parole</div>
+    <div class="modal-title">🎲 Password generator</div>
     <div class="reveal-box" style="margin-bottom:16px;">
       <div class="reveal-password" id="genOutput" style="font-size:1rem;min-height:40px;word-break:break-all;">—</div>
     </div>
     <div class="slider-wrap">
-      <label style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Lungime</label>
+      <label style="font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:0.05em;">Length</label>
       <div class="slider-row">
         <input type="range" id="genLen" min="8" max="40" value="${o.length}">
         <span class="slider-val" id="genLenVal">${o.length}</span>
@@ -1338,10 +1433,10 @@ function showGeneratorModal() {
       <button class="gen-chip ${o.symbols ? 'active' : ''}" id="cSymbols">!@#</button>
     </div>
     <div style="display:flex;gap:8px;margin-top:8px;">
-      <button class="btn btn-primary" id="genRefresh" style="flex:1;">🔄 Generează</button>
-      <button class="btn btn-ghost"   id="genCopy"    style="flex:1;">📋 Copiază</button>
+      <button class="btn btn-primary" id="genRefresh" style="flex:1;">🔄 Generate</button>
+      <button class="btn btn-ghost"   id="genCopy"    style="flex:1;">📋 Copy</button>
     </div>
-    <button class="btn btn-ghost" id="genClose" style="margin-top:8px;">Închide</button>
+    <button class="btn btn-ghost" id="genClose" style="margin-top:8px;">Close</button>
   `);
 
   let current = '';
@@ -1356,7 +1451,8 @@ function showGeneratorModal() {
     document.getElementById('genLenVal').textContent = e.target.value;
     generate();
   });
-  ['Upper','Lower','Digits','Symbols'].forEach(k => {
+
+  ['Upper', 'Lower', 'Digits', 'Symbols'].forEach(k => {
     const key = k.toLowerCase();
     const btn = document.getElementById('c' + k);
     btn.addEventListener('click', () => {
@@ -1365,34 +1461,35 @@ function showGeneratorModal() {
       generate();
     });
   });
+
   document.getElementById('genRefresh').addEventListener('click', generate);
   document.getElementById('genCopy').addEventListener('click', () => { if (current) copyText(current); });
   document.getElementById('genClose').addEventListener('click', () => overlay.remove());
 
-  generate();
+  generate(); // generate one on open
 }
 
 // ════════════════════════════════════════════════
 // SETTINGS MODAL
 // ════════════════════════════════════════════════
 function showSettingsModal() {
-  const s   = state.settings;
-  const len = state.pinLength;
+  const s       = state.settings;
+  const len     = state.pinLength;
   const overlay = openModal(`
-    <div class="modal-title">⚙ Setări</div>
+    <div class="modal-title">⚙ Settings</div>
 
     <div class="setting-row">
       <div class="setting-row-info">
-        <div class="setting-row-label">PIN curent</div>
-        <div class="setting-row-desc">${len} cifre</div>
+        <div class="setting-row-label">Current PIN</div>
+        <div class="setting-row-desc">${len} digits</div>
       </div>
       <div style="font-family:var(--mono);font-size:0.85rem;color:var(--gold);">${'●'.repeat(len)}</div>
     </div>
 
     <div class="setting-row">
       <div class="setting-row-info">
-        <div class="setting-row-label">Blocare după tentative greșite</div>
-        <div class="setting-row-desc">Blochează aplicația 5 minute</div>
+        <div class="setting-row-label">Lock after wrong attempts</div>
+        <div class="setting-row-desc">Locks the app for 5 minutes</div>
       </div>
       <select class="select-mini" id="sLock">
         <option value="3" ${s.lockAfter===3?'selected':''}>3</option>
@@ -1403,11 +1500,11 @@ function showSettingsModal() {
 
     <div class="setting-row">
       <div class="setting-row-info">
-        <div class="setting-row-label">Ștergere date după tentative</div>
-        <div class="setting-row-desc" style="color:var(--red)">⚠️ Ireversibil</div>
+        <div class="setting-row-label">Wipe data after attempts</div>
+        <div class="setting-row-desc" style="color:var(--red)">⚠️ Irreversible</div>
       </div>
       <select class="select-mini" id="sWipe">
-        <option value="0"  ${s.wipeAfter===0?'selected':''}>Dezactivat</option>
+        <option value="0"  ${s.wipeAfter===0?'selected':''}>Disabled</option>
         <option value="5"  ${s.wipeAfter===5?'selected':''}>5</option>
         <option value="7"  ${s.wipeAfter===7?'selected':''}>7</option>
         <option value="10" ${s.wipeAfter===10?'selected':''}>10</option>
@@ -1416,11 +1513,11 @@ function showSettingsModal() {
 
     <div class="setting-row">
       <div class="setting-row-info">
-        <div class="setting-row-label">Auto-blocare după inactivitate</div>
-        <div class="setting-row-desc">Blochează automat seiful</div>
+        <div class="setting-row-label">Auto-lock after inactivity</div>
+        <div class="setting-row-desc">Automatically locks the vault</div>
       </div>
       <select class="select-mini" id="sAuto">
-        <option value="0"  ${s.autoLockMins===0?'selected':''}>Niciodată</option>
+        <option value="0"  ${s.autoLockMins===0?'selected':''}>Never</option>
         <option value="2"  ${s.autoLockMins===2?'selected':''}>2 min</option>
         <option value="5"  ${s.autoLockMins===5?'selected':''}>5 min</option>
         <option value="10" ${s.autoLockMins===10?'selected':''}>10 min</option>
@@ -1428,11 +1525,11 @@ function showSettingsModal() {
       </select>
     </div>
 
-    <div class="divider" style="margin:20px 0 12px;">Pericol</div>
-    <button class="btn btn-danger" id="sPinChange">🔑 Schimbă PIN-ul</button>
-    <button class="btn btn-danger" id="sUpdateRecovery" style="margin-top:8px;">🛡 Actualizează întrebările de securitate</button>
-    <button class="btn btn-danger" id="sWipeAll" style="margin-top:8px;">💀 Șterge tot seiful</button>
-    <button class="btn btn-ghost"  id="sClose" style="margin-top:8px;">Închide</button>
+    <div class="divider" style="margin:20px 0 12px;">Danger zone</div>
+    <button class="btn btn-danger" id="sPinChange">🔑 Change PIN</button>
+    <button class="btn btn-danger" id="sUpdateRecovery" style="margin-top:8px;">🛡 Update security questions</button>
+    <button class="btn btn-danger" id="sWipeAll"        style="margin-top:8px;">💀 Wipe entire vault</button>
+    <button class="btn btn-ghost"  id="sClose"          style="margin-top:8px;">Close</button>
   `);
 
   document.getElementById('sLock').addEventListener('change', e => {
@@ -1458,58 +1555,63 @@ function showSettingsModal() {
 
 // ════════════════════════════════════════════════
 // CHANGE PIN MODAL
+// Re-encrypts the vault with the new PIN.
+// Clears the old recovery data — user must update
+// security questions afterwards.
 // ════════════════════════════════════════════════
 function showChangePinModal() {
-  const len = state.pinLength;
+  const len     = state.pinLength;
   const overlay = openModal(`
-    <div class="modal-title">🔑 Schimbă PIN</div>
+    <div class="modal-title">🔑 Change PIN</div>
 
-    <div class="section-label">Lungime PIN nou</div>
+    <div class="section-label">New PIN length</div>
     <div class="pin-length-selector" id="changeLenSel">
-      <button class="pin-len-btn ${len===4?'active':''}" data-len="4">4 cifre</button>
-      <button class="pin-len-btn ${len===6?'active':''}" data-len="6">6 cifre</button>
-      <button class="pin-len-btn ${len===8?'active':''}" data-len="8">8 cifre</button>
+      <button class="pin-len-btn ${len===4?'active':''}" data-len="4">4 digits</button>
+      <button class="pin-len-btn ${len===6?'active':''}" data-len="6">6 digits</button>
+      <button class="pin-len-btn ${len===8?'active':''}" data-len="8">8 digits</button>
     </div>
 
     <div class="field">
-      <label>PIN curent</label>
+      <label>Current PIN</label>
       <div class="input-wrap">
-        <input type="password" id="cpOld" inputmode="numeric" maxlength="${len}"
-          placeholder="PIN curent — ${len} cifre" class="has-icon">
+        <input type="password" id="cpOld" inputmode="numeric"
+          maxlength="${len}" placeholder="Current PIN — ${len} digits" class="has-icon">
         <button class="eye-btn" id="cpEye1">👁</button>
       </div>
     </div>
     <div class="field">
-      <label>PIN nou</label>
+      <label>New PIN</label>
       <div class="input-wrap">
-        <input type="password" id="cpNew" inputmode="numeric" maxlength="${len}"
-          placeholder="PIN nou — ${len} cifre" class="has-icon">
+        <input type="password" id="cpNew" inputmode="numeric"
+          maxlength="${len}" placeholder="New PIN — ${len} digits" class="has-icon">
         <button class="eye-btn" id="cpEye2">👁</button>
       </div>
     </div>
     <div class="field">
-      <label>Confirmă PIN nou</label>
+      <label>Confirm new PIN</label>
       <div class="input-wrap">
-        <input type="password" id="cpConf" inputmode="numeric" maxlength="${len}"
-          placeholder="Repetă PIN-ul nou">
+        <input type="password" id="cpConf" inputmode="numeric"
+          maxlength="${len}" placeholder="Repeat new PIN">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;">
-      <button class="btn btn-primary" id="cpSave"   style="flex:1;">Salvează</button>
-      <button class="btn btn-ghost"   id="cpCancel" style="flex:1;">Anulează</button>
+      <button class="btn btn-primary" id="cpSave"   style="flex:1;">Save</button>
+      <button class="btn btn-ghost"   id="cpCancel" style="flex:1;">Cancel</button>
     </div>
   `);
 
-  // allow changing the new pin length inline
+  // Allow changing the new PIN length inline
   let newLen = len;
   overlay.querySelectorAll('.pin-len-btn').forEach(btn => {
     btn.addEventListener('click', () => {
       newLen = parseInt(btn.dataset.len);
-      overlay.querySelectorAll('.pin-len-btn').forEach(b => b.classList.toggle('active', parseInt(b.dataset.len) === newLen));
+      overlay.querySelectorAll('.pin-len-btn').forEach(b =>
+        b.classList.toggle('active', parseInt(b.dataset.len) === newLen)
+      );
       document.getElementById('cpNew').maxLength  = newLen;
       document.getElementById('cpConf').maxLength = newLen;
-      document.getElementById('cpNew').placeholder  = `PIN nou — ${newLen} cifre`;
-      document.getElementById('cpConf').placeholder = `Repetă PIN-ul nou — ${newLen} cifre`;
+      document.getElementById('cpNew').placeholder  = `New PIN — ${newLen} digits`;
+      document.getElementById('cpConf').placeholder = `Repeat new PIN — ${newLen} digits`;
     });
   });
 
@@ -1522,67 +1624,74 @@ function showChangePinModal() {
     const conf = document.getElementById('cpConf').value;
 
     if (!pinRegex(len).test(old)) {
-      showToast(`❌ PIN curent trebuie să aibă ${len} cifre`, 2000, '#e05252'); return;
+      showToast(`❌ Current PIN must be ${len} digits`, 2000, '#e05252'); return;
     }
     if (old !== state.pin) {
-      showToast('❌ PIN curent greșit', 2000, '#e05252'); return;
+      showToast('❌ Wrong current PIN', 2000, '#e05252'); return;
     }
     if (!pinRegex(newLen).test(nw)) {
-      showToast(`❌ PIN nou trebuie să aibă ${newLen} cifre`, 2000, '#e05252'); return;
+      showToast(`❌ New PIN must be ${newLen} digits`, 2000, '#e05252'); return;
     }
     if (nw !== conf) {
-      showToast('❌ PIN-urile nu coincid', 2000, '#e05252'); return;
+      showToast('❌ PINs do not match', 2000, '#e05252'); return;
     }
 
-    // Re-encrypt vault with new pin
-    state.pin = nw;
+    // Re-encrypt vault with new PIN
+    state.pin       = nw;
     state.pinLength = newLen;
     localStorage.setItem(K.pinLen, String(newLen));
     await saveVault();
 
-    // Update recovery with new pin (keep same answers — user must update manually)
-    // We can't silently re-encrypt recovery since we don't have answers
-    // Mark recovery as stale
+    // Clear old recovery — it was tied to the old PIN.
+    // User must update security questions manually.
     localStorage.removeItem(K.recovery);
-    localStorage.removeItem('v_recovery_meta');
+    localStorage.removeItem(K.recMeta);
+    localStorage.removeItem(K.recSalt);
 
     overlay.remove();
-    showToast('✓ PIN schimbat — actualizează întrebările de securitate!', 3500, '#e8c96d');
+    showToast('✓ PIN changed — please update your security questions!', 3500, '#e8c96d');
     showSettingsModal();
   });
+
   document.getElementById('cpCancel').addEventListener('click', () => overlay.remove());
 }
 
 // ════════════════════════════════════════════════
-// UPDATE RECOVERY QUESTIONS
+// UPDATE SECURITY QUESTIONS MODAL
 // ════════════════════════════════════════════════
 function showUpdateRecoveryModal() {
   const hasRecovery = !!localStorage.getItem(K.recovery);
-  const overlay = openModal(`
-    <div class="modal-title">🛡 Întrebări de securitate</div>
-    ${!hasRecovery ? '<div class="recovery-info" style="border-color:#e0525230;background:var(--red-dim);"><strong style="color:var(--red)">⚠️ Atenție!</strong> Nu există întrebări de securitate salvate. Dacă uiți PIN-ul, nu vei putea recupera accesul!</div>' : ''}
+  const overlay     = openModal(`
+    <div class="modal-title">🛡 Security questions</div>
+    ${!hasRecovery
+      ? `<div class="info-box" style="border-color:#e0525230;background:var(--red-dim);">
+           <strong style="color:var(--red)">⚠️ Warning!</strong>
+           No security questions are saved. If you forget your PIN you will not be able to recover access!
+         </div>`
+      : ''
+    }
 
     <div class="field">
-      <label>Întrebarea 1</label>
+      <label>Question 1</label>
       <select class="select-mini" id="uq1" style="width:100%;padding:10px 12px;margin-bottom:8px;">
         ${SECURITY_QUESTIONS.map((q,i) => `<option value="${i}">${q}</option>`).join('')}
       </select>
       <div class="input-wrap">
-        <input type="text" id="ua1" placeholder="Răspunsul tău">
+        <input type="text" id="ua1" placeholder="Your answer">
       </div>
     </div>
     <div class="field">
-      <label>Întrebarea 2</label>
+      <label>Question 2</label>
       <select class="select-mini" id="uq2" style="width:100%;padding:10px 12px;margin-bottom:8px;">
         ${SECURITY_QUESTIONS.map((q,i) => `<option value="${i}" ${i===1?'selected':''}>${q}</option>`).join('')}
       </select>
       <div class="input-wrap">
-        <input type="text" id="ua2" placeholder="Răspunsul tău">
+        <input type="text" id="ua2" placeholder="Your answer">
       </div>
     </div>
     <div style="display:flex;gap:8px;margin-top:4px;">
-      <button class="btn btn-primary" id="uSave"   style="flex:1;">💾 Salvează</button>
-      <button class="btn btn-ghost"   id="uCancel" style="flex:1;">Anulează</button>
+      <button class="btn btn-primary" id="uSave"   style="flex:1;">💾 Save</button>
+      <button class="btn btn-ghost"   id="uCancel" style="flex:1;">Cancel</button>
     </div>
   `);
 
@@ -1592,80 +1701,200 @@ function showUpdateRecoveryModal() {
     const q1 = parseInt(document.getElementById('uq1').value);
     const q2 = parseInt(document.getElementById('uq2').value);
 
-    if (!a1 || !a2) { showToast('❌ Completează ambele răspunsuri', 2000, '#e05252'); return; }
-    if (q1 === q2)  { showToast('❌ Alege întrebări diferite', 2000, '#e05252'); return; }
+    if (!a1 || !a2) { showToast('❌ Fill in both answers', 2000, '#e05252'); return; }
+    if (q1 === q2)  { showToast('❌ Choose two different questions', 2000, '#e05252'); return; }
 
-    const recoveryMeta = { q1: SECURITY_QUESTIONS[q1], q2: SECURITY_QUESTIONS[q2] };
-    localStorage.setItem('v_recovery_meta', JSON.stringify(recoveryMeta));
+    localStorage.setItem(K.recMeta, JSON.stringify({
+      q1: SECURITY_QUESTIONS[q1],
+      q2: SECURITY_QUESTIONS[q2],
+    }));
     await saveRecovery(state.pin, [a1, a2]);
 
     overlay.remove();
-    showToast('✓ Întrebări de securitate actualizate');
+    showToast('✓ Security questions updated');
   });
+
   document.getElementById('uCancel').addEventListener('click', () => overlay.remove());
 }
 
 // ════════════════════════════════════════════════
-// WIPE CONFIRM
+// WIPE CONFIRMATION
 // ════════════════════════════════════════════════
 function confirmWipe() {
   openModal(`
-    <div class="modal-title" style="color:var(--red)">💀 Atenție maximă</div>
+    <div class="modal-title" style="color:var(--red)">💀 Maximum caution</div>
     <p style="color:var(--muted);margin-bottom:8px;">
-      Aceasta va șterge <strong style="color:var(--red)">definitiv și ireversibil</strong>
-      toate parolele și setările tale. Nu există nicio modalitate de recuperare.
+      This will <strong style="color:var(--red)">permanently and irreversibly</strong>
+      delete all your passwords and settings. There is no way to recover them.
     </p>
     <p style="font-family:var(--mono);font-size:0.8rem;color:var(--muted);margin-bottom:20px;">
-      Tastează <strong style="color:var(--red)">STERG TOT</strong> pentru a confirma:
+      Type <strong style="color:var(--red)">DELETE ALL</strong> to confirm:
     </p>
     <div class="field">
-      <input type="text" id="wipeConfirm" placeholder="STERG TOT">
+      <input type="text" id="wipeConfirm" placeholder="DELETE ALL">
     </div>
     <div style="display:flex;gap:8px;">
-      <button class="btn btn-danger" id="wipeExec"   style="flex:1;">Șterge definitiv</button>
-      <button class="btn btn-ghost"  id="wipeCancel" style="flex:1;">Anulează</button>
+      <button class="btn btn-danger" id="wipeExec"   style="flex:1;">Delete permanently</button>
+      <button class="btn btn-ghost"  id="wipeCancel" style="flex:1;">Cancel</button>
     </div>
   `);
 
   document.getElementById('wipeExec').addEventListener('click', () => {
-    if (document.getElementById('wipeConfirm').value !== 'STERG TOT') {
-      showToast('❌ Tastează exact: STERG TOT', 2000, '#e05252'); return;
+    if (document.getElementById('wipeConfirm').value !== 'DELETE ALL') {
+      showToast('❌ Type exactly: DELETE ALL', 2000, '#e05252'); return;
     }
     localStorage.clear();
-    showToast('🗑 Toate datele au fost șterse', 3000, '#e05252');
+    showToast('🗑 All data has been deleted', 3000, '#e05252');
     setTimeout(() => location.reload(), 1200);
   });
   document.getElementById('wipeCancel').addEventListener('click', closeAllModals);
 }
 
 // ════════════════════════════════════════════════
-// EXPORT / IMPORT
+// EXPORT
+// Data is encrypted with a user-chosen export password
+// and a freshly generated salt embedded in the file.
+// This makes the backup importable on any device,
+// regardless of that device's PIN or local salt.
+// File format: JSON { format:"vault3", salt:"<b64>", data:"<b64>" }
 // ════════════════════════════════════════════════
 async function exportVault() {
-  const salt = getSalt();
-  const enc  = await Crypto.encrypt(
-    JSON.stringify({ v: 2, entries: state.entries, ts: Date.now() }),
-    state.pin, salt
-  );
-  const blob = new Blob([enc], { type: 'application/octet-stream' });
-  const a    = document.createElement('a');
-  a.href     = URL.createObjectURL(blob);
-  a.download = `vault_${new Date().toISOString().slice(0, 10)}.vault`;
-  a.click();
-  URL.revokeObjectURL(a.href);
-  showToast('✓ Backup exportat');
+  const overlay = openModal(`
+    <div class="modal-title">📤 Export vault</div>
+    <div class="info-box">
+      The exported file will be encrypted with a <strong>separate password</strong>
+      that you choose now. This password is required to import on any device,
+      regardless of your vault PIN.
+    </div>
+    <div class="field">
+      <label>Export password</label>
+      <div class="input-wrap">
+        <input type="password" id="expPwd1"
+          placeholder="Choose a password for the backup file" class="has-icon">
+        <button class="eye-btn" id="expEye1">👁</button>
+      </div>
+    </div>
+    <div class="field">
+      <label>Confirm password</label>
+      <div class="input-wrap">
+        <input type="password" id="expPwd2" placeholder="Repeat the password">
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" id="expDo"     style="flex:1;">📥 Download backup</button>
+      <button class="btn btn-ghost"   id="expCancel" style="flex:1;">Cancel</button>
+    </div>
+  `);
+  toggleEye('expEye1', 'expPwd1');
+
+  document.getElementById('expDo').addEventListener('click', async () => {
+    const p1 = document.getElementById('expPwd1').value;
+    const p2 = document.getElementById('expPwd2').value;
+
+    if (!p1 || p1.length < 4) {
+      showToast('❌ Password must be at least 4 characters', 2500, '#e05252'); return;
+    }
+    if (p1 !== p2) {
+      showToast('❌ Passwords do not match', 2000, '#e05252'); return;
+    }
+
+    // Generate a fresh salt dedicated to this export file
+    const expSalt    = crypto.getRandomValues(new Uint8Array(16));
+    const expSaltB64 = btoa(String.fromCharCode(...expSalt));
+
+    // Encrypt the vault data with the export password + fresh salt
+    const payload = JSON.stringify({ v: 3, entries: state.entries, ts: Date.now() });
+    const enc     = await Crypto.encrypt(payload, p1, expSalt);
+
+    // Embed the salt in plaintext inside the file (it is not secret)
+    const fileData = JSON.stringify({ format: 'vault3', salt: expSaltB64, data: enc });
+
+    const blob = new Blob([fileData], { type: 'application/json' });
+    const a    = document.createElement('a');
+    a.href     = URL.createObjectURL(blob);
+    a.download = `vault_${new Date().toISOString().slice(0, 10)}.vault`;
+    a.click();
+    URL.revokeObjectURL(a.href);
+    overlay.remove();
+    showToast('✓ Backup exported successfully');
+  });
+
+  document.getElementById('expCancel').addEventListener('click', () => overlay.remove());
 }
 
+// ════════════════════════════════════════════════
+// IMPORT ROUTER
+// Detects file type (.vault → vault3, .txt → text parser)
+// ════════════════════════════════════════════════
 async function importVault(evt) {
   const file = evt.target.files[0];
   if (!file) return;
+  evt.target.value = ''; // reset so same file can be imported again
+
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if (ext === 'txt') {
+    importFromTxt(file);
+    return;
+  }
+
+  // .vault file — read and detect format
   const reader = new FileReader();
   reader.onload = async e => {
+    let parsed;
     try {
-      const salt = getSalt();
-      const dec  = await Crypto.decrypt(e.target.result, state.pin, salt);
+      parsed = JSON.parse(e.target.result);
+    } catch(err) {
+      parsed = null;
+    }
+
+    if (parsed && parsed.format === 'vault3') {
+      // New cross-device format: requires export password
+      importVault3(parsed);
+    } else {
+      // Old format (v1/v2) was encrypted with the device PIN + local salt — not portable
+      showToast('❌ Old format not supported. Please re-export with an export password.', 3500, '#e05252');
+    }
+  };
+  reader.readAsText(file);
+}
+
+// ════════════════════════════════════════════════
+// IMPORT vault3 — cross-device backup
+// Prompts for the export password used at export time.
+// ════════════════════════════════════════════════
+function importVault3(parsed) {
+  const overlay = openModal(`
+    <div class="modal-title">📥 Import backup</div>
+    <div class="info-box">
+      Enter the <strong>export password</strong> that was used when this backup was created.
+    </div>
+    <div class="field">
+      <label>Export password</label>
+      <div class="input-wrap">
+        <input type="password" id="impPwd"
+          placeholder="Backup file password" class="has-icon" autofocus>
+        <button class="eye-btn" id="impEye">👁</button>
+      </div>
+    </div>
+    <div style="display:flex;gap:8px;margin-top:4px;">
+      <button class="btn btn-primary" id="impDo"     style="flex:1;">✓ Import</button>
+      <button class="btn btn-ghost"   id="impCancel" style="flex:1;">Cancel</button>
+    </div>
+  `);
+  toggleEye('impEye', 'impPwd');
+
+  document.getElementById('impDo').addEventListener('click', async () => {
+    const pwd = document.getElementById('impPwd').value;
+    if (!pwd) { showToast('❌ Enter the backup password', 2000, '#e05252'); return; }
+
+    try {
+      const salt = Uint8Array.from(atob(parsed.salt), c => c.charCodeAt(0));
+      const dec  = await Crypto.decrypt(parsed.data, pwd, salt);
       const data = JSON.parse(dec);
-      if (!Array.isArray(data.entries)) throw new Error();
+      if (!Array.isArray(data.entries)) throw new Error('invalid');
+
+      // Merge: skip duplicates by id
       const before   = state.entries.length;
       const existing = new Set(state.entries.map(e => e.id));
       data.entries.forEach(entry => {
@@ -1674,19 +1903,237 @@ async function importVault(evt) {
       });
       await saveVault();
       renderEntries();
+      const badge = document.querySelector('.badge');
+      if (badge) badge.textContent = state.entries.length + (state.entries.length === 1 ? ' entry' : ' entries');
       const added = state.entries.length - before;
-      showToast(`✓ Import reușit — ${added} intrări noi`);
+      overlay.remove();
+      showToast(`✓ Import successful — ${added} new ${added === 1 ? 'entry' : 'entries'}`);
     } catch(err) {
-      showToast('❌ Fișier invalid sau PIN greșit', 2500, '#e05252');
+      showToast('❌ Wrong password or corrupted file', 2500, '#e05252');
     }
-  };
-  reader.readAsText(file);
-  evt.target.value = '';
+  });
+
+  document.getElementById('impCancel').addEventListener('click', () => overlay.remove());
 }
 
 // ════════════════════════════════════════════════
-// UTILS
+// IMPORT FROM TXT
+// Reads a plain-text file and tries to extract
+// email / password pairs using a smart parser.
+// Supported formats:
+//   email:password   email|password   email password
+//   Labeled blocks (Email: ..., Password: ..., Site: ...)
+//   URL on its own line followed by email + password
 // ════════════════════════════════════════════════
+function importFromTxt(file) {
+  const reader = new FileReader();
+  reader.onload = async e => {
+    const found = parseTxtPasswords(e.target.result);
+    if (!found.length) {
+      showToast('❌ No email/password pairs detected in file', 3000, '#e05252');
+      return;
+    }
+    showTxtImportPreview(found);
+  };
+  reader.readAsText(file);
+}
+
+// Smart TXT password parser
+function parseTxtPasswords(text) {
+  const results = [];
+  const seen    = new Set();
+  const lines   = text.split(/\r?\n/);
+
+  const emailRe      = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
+  const siteRe       = /^(?:site|website|url|platform|app|account|service)[:\s]+(.+)/i;
+  const emailLabelRe = /^(?:email|user|username|login|mail)[:\s]+(.+)/i;
+  const passLabelRe  = /^(?:password|pass|pwd|pw|key|secret)[:\s]+(.+)/i;
+
+  let buf = { site: '', email: '', password: '' };
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i].trim();
+
+    if (!line) {
+      // Empty line — flush buffered block if complete
+      if (buf.email && buf.password) {
+        const key = buf.email + '|' + buf.password;
+        if (!seen.has(key)) { results.push({ ...buf }); seen.add(key); }
+        buf = { site: '', email: '', password: '' };
+      }
+      continue;
+    }
+
+    // Labeled block patterns
+    const siteM  = line.match(siteRe);
+    const emailM = line.match(emailLabelRe);
+    const passM  = line.match(passLabelRe);
+
+    if (siteM)  { buf.site     = siteM[1].trim();  continue; }
+    if (emailM) { buf.email    = emailM[1].trim();  continue; }
+    if (passM)  { buf.password = passM[1].trim();   continue; }
+
+    // Inline separator patterns: email:pass  email|pass
+    const sep = line.match(/^(.+?)[:\|]\s*(\S+)\s*$/)
+              || line.match(/^([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})\s+(\S+)$/);
+    if (sep) {
+      const left  = sep[1].trim();
+      const right = sep[2].trim();
+      const emailMatch = left.match(emailRe);
+      if (emailMatch && right.length >= 3) {
+        const email    = emailMatch[0];
+        // Extract site from URL if present on the left side
+        const urlMatch = left.match(/https?:\/\/([^\/]+)/);
+        const site     = buf.site || (urlMatch ? urlMatch[1] : '');
+        const key      = email + '|' + right;
+        if (!seen.has(key)) { results.push({ site, email, password: right }); seen.add(key); }
+        buf = { site: '', email: '', password: '' };
+        continue;
+      }
+    }
+
+    // Bare URL line — capture as site for the next entry
+    const urlM = line.match(/^https?:\/\/([^\/\s]+)/);
+    if (urlM) { buf.site = urlM[1]; continue; }
+
+    // Bare email on its own line — look ahead for the password on the next line
+    const justEmail = line.match(emailRe);
+    if (justEmail && line.trim() === justEmail[0]) {
+      buf.email = justEmail[0];
+      const nextLine = (lines[i + 1] || '').trim();
+      if (nextLine && !nextLine.match(emailRe) && !nextLine.match(/[:\|]/) && nextLine.length >= 3) {
+        const key = buf.email + '|' + nextLine;
+        if (!seen.has(key)) {
+          results.push({ site: buf.site || '', email: buf.email, password: nextLine });
+          seen.add(key);
+        }
+        buf = { site: '', email: '', password: '' };
+        i++; // skip the password line
+      }
+    }
+  }
+
+  // Flush the last block if the file has no trailing blank line
+  if (buf.email && buf.password) {
+    const key = buf.email + '|' + buf.password;
+    if (!seen.has(key)) results.push({ ...buf });
+  }
+
+  return results;
+}
+
+// ════════════════════════════════════════════════
+// TXT IMPORT PREVIEW
+// Shows a table of detected entries; user can deselect
+// any rows they do not want to import.
+// ════════════════════════════════════════════════
+function showTxtImportPreview(found) {
+  // Fill in missing sites using the email domain
+  found.forEach((item, i) => {
+    if (!item.site) item.site = item.email.split('@')[1] || `Import ${i + 1}`;
+  });
+
+  const rows = found.map((item, i) => `
+    <tr style="border-bottom:1px solid var(--border);">
+      <td style="padding:6px 4px;">
+        <input type="checkbox" class="imp-chk" data-idx="${i}" checked
+          style="accent-color:var(--gold);width:16px;height:16px;cursor:pointer;">
+      </td>
+      <td style="padding:6px 8px;font-size:0.82rem;color:var(--text);
+          max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.site)}</td>
+      <td style="padding:6px 8px;font-family:var(--mono);font-size:0.75rem;color:var(--muted);
+          max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.email)}</td>
+      <td style="padding:6px 8px;font-family:var(--mono);font-size:0.75rem;color:var(--gold);
+          filter:blur(4px);max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${esc(item.password)}</td>
+    </tr>
+  `).join('');
+
+  const overlay = openModal(`
+    <div class="modal-title">📋 TXT import preview</div>
+    <div class="info-box">
+      Detected <strong style="color:var(--gold)">${found.length} ${found.length === 1 ? 'entry' : 'entries'}</strong>.
+      Uncheck any rows you do not want to import. Passwords are blurred for security.
+    </div>
+    <div style="max-height:300px;overflow-y:auto;margin-bottom:16px;
+        border:1px solid var(--border);border-radius:10px;padding:4px 0;">
+      <table style="width:100%;border-collapse:collapse;">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border2);">
+            <th style="padding:6px 4px;width:24px;"></th>
+            <th style="padding:6px 8px;text-align:left;font-size:0.7rem;color:var(--muted);
+                font-family:var(--mono);text-transform:uppercase;letter-spacing:0.1em;">Site</th>
+            <th style="padding:6px 8px;text-align:left;font-size:0.7rem;color:var(--muted);
+                font-family:var(--mono);text-transform:uppercase;letter-spacing:0.1em;">Email</th>
+            <th style="padding:6px 8px;text-align:left;font-size:0.7rem;color:var(--muted);
+                font-family:var(--mono);text-transform:uppercase;letter-spacing:0.1em;">Password</th>
+          </tr>
+        </thead>
+        <tbody>${rows}</tbody>
+      </table>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;margin-bottom:12px;">
+      <button class="btn btn-ghost btn-sm" id="impSelAll"  style="width:auto;">Select all</button>
+      <button class="btn btn-ghost btn-sm" id="impSelNone" style="width:auto;">Deselect all</button>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <button class="btn btn-primary" id="impTxtDo"     style="flex:1;">✓ Import selected</button>
+      <button class="btn btn-ghost"   id="impTxtCancel" style="flex:1;">Cancel</button>
+    </div>
+  `);
+
+  document.getElementById('impSelAll').addEventListener('click', () => {
+    overlay.querySelectorAll('.imp-chk').forEach(c => c.checked = true);
+  });
+  document.getElementById('impSelNone').addEventListener('click', () => {
+    overlay.querySelectorAll('.imp-chk').forEach(c => c.checked = false);
+  });
+
+  document.getElementById('impTxtDo').addEventListener('click', async () => {
+    const selected = [];
+    overlay.querySelectorAll('.imp-chk').forEach(chk => {
+      if (chk.checked) selected.push(found[parseInt(chk.dataset.idx)]);
+    });
+
+    if (!selected.length) {
+      showToast('❌ No entries selected', 2000, '#e05252'); return;
+    }
+
+    const before   = state.entries.length;
+    const existing = new Set(
+      state.entries.map(e => e.email.toLowerCase() + '|' + e.password)
+    );
+
+    selected.forEach(item => {
+      const key = item.email.toLowerCase() + '|' + item.password;
+      if (!existing.has(key)) {
+        state.entries.push({
+          id:       crypto.randomUUID(),
+          site:     item.site,
+          email:    item.email,
+          password: item.password,
+          created:  Date.now(),
+        });
+        existing.add(key);
+      }
+    });
+
+    await saveVault();
+    renderEntries();
+    const badge = document.querySelector('.badge');
+    if (badge) badge.textContent = state.entries.length + (state.entries.length === 1 ? ' entry' : ' entries');
+    const added = state.entries.length - before;
+    overlay.remove();
+    showToast(`✓ ${added} ${added === 1 ? 'entry' : 'entries'} imported from TXT`);
+  });
+
+  document.getElementById('impTxtCancel').addEventListener('click', () => overlay.remove());
+}
+
+// ════════════════════════════════════════════════
+// UTILITY FUNCTIONS
+// ════════════════════════════════════════════════
+
+// Toggle password visibility on an input; update eye button emoji
 function toggleEye(btnId, inputId) {
   const btn   = document.getElementById(btnId);
   const input = document.getElementById(inputId);
@@ -1698,6 +2145,7 @@ function toggleEye(btnId, inputId) {
   });
 }
 
+// Flash PIN dots with an animation class (e.g. 'error') then remove it
 function flashDots(dots, cls) {
   dots.forEach(d => d.classList.add(cls));
   setTimeout(() => dots.forEach(d => d.classList.remove(cls)), 600);
