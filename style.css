@@ -237,3 +237,7 @@ textarea.mono { font-family: var(--mono); font-size: 15px; }
 .modal-x { flex: none; width: 36px; height: 36px; margin: -6px -8px 0 0; border-radius: 10px; border: 1px solid var(--border); background: transparent; color: var(--muted); font-size: 15px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .modal-x:hover, .modal-x:focus-visible { color: var(--text); border-color: var(--border2); outline: none; }
 textarea.backup-text { font-size: 11px; line-height: 1.4; word-break: break-all; min-height: 0; }
+
+/* Install banner */
+.install-banner { width: 100%; max-width: 540px; margin-bottom: 16px; padding: 16px; border: 1px solid #c9a84c50; border-radius: 16px; background: var(--gold-dim); display: flex; flex-direction: column; gap: 10px; }
+.install-text { font-size: .85rem; color: var(--text); line-height: 1.5; }

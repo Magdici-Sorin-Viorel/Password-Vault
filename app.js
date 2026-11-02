@@ -6,7 +6,7 @@
 // ════════════════════════════════════════════════════════════════
 import * as C from './crypto.js';
 
-const APP_VERSION = '5.2.0';
+const APP_VERSION = '5.3.0';
 
 // Framing is not blocked on purpose: modern browsers partition the storage of a
 // cross-site iframe, so a foreign site embedding the app only sees an empty vault.
@@ -1422,6 +1422,30 @@ function parseTxtPasswords(text) {
   flush();
   return results.map(r => ({ ...r, site: r.site || r.username.split('@')[1] || 'Import' }));
 }
+
+// ── Install button ─────────────────────────────────────────────
+// Chrome fires 'beforeinstallprompt' when the app can be installed; we show our own button.
+let installEvent = null;
+const isStandalone = () => matchMedia('(display-mode: standalone)').matches;
+function showInstallBanner() {
+  document.getElementById('install-banner')?.remove();
+  if (!installEvent || isStandalone()) return;
+  const btn = h('button', { class: 'btn btn-primary', onclick: async () => {
+    const ev = installEvent; installEvent = null;
+    banner.remove();
+    try {
+      await ev.prompt();
+      const { outcome } = await ev.userChoice;
+      if (outcome === 'accepted') toast('✓ Vault se instalează. Îl găsești printre aplicații.', 'ok', 4000);
+    } catch (e) { console.error(e); }
+  } }, '📲 Instalează aplicația');
+  const banner = h('div', { id: 'install-banner', class: 'install-banner' },
+    h('div', { class: 'install-text' }, 'Instalează Vault ca aplicație: se deschide pe tot ecranul, fără bara browserului, și merge offline.'),
+    btn);
+  document.getElementById('app').before(banner);
+}
+window.addEventListener('beforeinstallprompt', e => { e.preventDefault(); installEvent = e; showInstallBanner(); });
+window.addEventListener('appinstalled', () => { installEvent = null; document.getElementById('install-banner')?.remove(); });
 
 // ── Service worker (offline + home-screen install) ──
 function registerSW() {
