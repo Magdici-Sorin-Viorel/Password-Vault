@@ -2,7 +2,7 @@
 // Caches the app shell so it works offline. It never sees vault data
 // (that lives encrypted in IndexedDB). Bump CACHE_VERSION on every code change
 // so phones download the new version.
-const CACHE_VERSION = 'vault-v5.3.0';
+const CACHE_VERSION = 'vault-v5.4.0';
 const ASSETS = [
   './', './index.html', './app.js', './crypto.js', './words.js', './vendor/argon2.umd.min.js', './style.css', './manifest.webmanifest',
   './icons/icon-192.png', './icons/icon-512.png', './icons/maskable-512.png', './icons/apple-touch-icon.png',

@@ -5,8 +5,9 @@
 // Code and comments are in English; user-facing strings are in Romanian.
 // ════════════════════════════════════════════════════════════════
 import * as C from './crypto.js';
+import { WORDS } from './words.js';
 
-const APP_VERSION = '5.3.0';
+const APP_VERSION = '5.4.0';
 
 // Framing is not blocked on purpose: modern browsers partition the storage of a
 // cross-site iframe, so a foreign site embedding the app only sees an empty vault.
@@ -735,9 +736,84 @@ function quizWords(words, onDone, total) {
 }
 
 // ── Restore on a new phone ───────────────────────────────────
+// 24 numbered boxes with autocomplete: type the first letters, the word completes
+// itself as soon as only one BIP39 word matches, and focus moves to the next box.
+// Pasting all 24 words into any box spreads them across the boxes.
 function wordsArea(id) {
-  const ta = h('textarea', { id, rows: 4, class: 'mono', placeholder: 'cele 24 de cuvinte, separate prin spațiu', autocomplete: 'off', autocapitalize: 'off', spellcheck: 'false' });
-  return ta;
+  const boxes = [];
+  const sugg = h('div', { class: 'word-sugg', 'aria-live': 'polite' });
+  const status = h('div', { class: 'word-status' });
+  const grid = h('div', { class: 'word-grid', id });
+
+  const setState = (inp, st) => { inp.parentElement.dataset.state = st; };
+  const updateStatus = () => {
+    const ok = boxes.filter(b => b.parentElement.dataset.state === 'ok').length;
+    const bad = boxes.filter(b => b.parentElement.dataset.state === 'bad').length;
+    status.textContent = bad ? `${ok}/24 cuvinte · ${bad} greșit${bad === 1 ? '' : 'e'}` : `${ok}/24 cuvinte`;
+    status.classList.toggle('done', ok === 24);
+    status.classList.toggle('bad', bad > 0);
+  };
+  const focusBox = i => { if (boxes[i]) { boxes[i].focus(); boxes[i].select(); } };
+  const accept = (i, word) => {
+    boxes[i].value = word; setState(boxes[i], 'ok'); sugg.replaceChildren(); updateStatus();
+    if (i < 23) focusBox(i + 1); else boxes[i].blur();
+  };
+  const showSugg = (i, matches) => sugg.replaceChildren(...matches.slice(0, 6).map(w =>
+    h('button', { type: 'button', class: 'word-chip', onmousedown: e => e.preventDefault(), onclick: () => accept(i, w) }, w)));
+  const spread = (from, parts) => {
+    parts.slice(0, 24 - from).forEach((w, k) => { boxes[from + k].value = w; check(from + k, false); });
+    focusBox(Math.min(23, from + parts.length));
+    updateStatus();
+  };
+  function check(i, interactive = true) {
+    const inp = boxes[i];
+    const w = inp.value.toLowerCase().trim();
+    inp.value = w;
+    if (!w) { setState(inp, ''); if (interactive) sugg.replaceChildren(); return; }
+    const matches = WORDS.filter(x => x.startsWith(w));
+    const exact = matches.includes(w);
+    if (!matches.length) { setState(inp, 'bad'); if (interactive) sugg.replaceChildren(); return; }
+    // BIP39 words are unique by their first 4 letters, so auto-complete at 4 letters
+    // (or when a full, unambiguous word is typed). Earlier, only suggest: otherwise the
+    // next letters the user is still typing would spill into the following box.
+    if (interactive && matches.length === 1 && (w.length >= 4 || exact)) return accept(i, matches[0]);
+    if (!interactive && (matches.length === 1 || exact)) { // pasted text: complete silently
+      inp.value = matches.length === 1 ? matches[0] : w; setState(inp, 'ok'); return;
+    }
+    setState(inp, exact ? 'ok' : 'partial');
+    if (interactive) showSugg(i, matches);
+  }
+
+  for (let i = 0; i < 24; i++) {
+    const inp = h('input', { type: 'text', class: 'word-box', autocomplete: 'off', autocapitalize: 'off', autocorrect: 'off',
+      spellcheck: 'false', enterkeyhint: i < 23 ? 'next' : 'done', 'aria-label': `Cuvântul ${i + 1}` });
+    inp.addEventListener('input', () => {
+      const raw = inp.value.toLowerCase().replace(/[^a-z\s]/g, ' ');
+      const parts = raw.trim().split(/\s+/).filter(Boolean);
+      if (parts.length > 1) return spread(i, parts);                 // pasted several words
+      const endedWithSpace = /\s$/.test(raw) && parts.length === 1;
+      inp.value = parts[0] || '';
+      if (endedWithSpace && WORDS.includes(inp.value)) return accept(i, inp.value);
+      check(i); updateStatus();
+    });
+    inp.addEventListener('keydown', e => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        const w = inp.value.trim();
+        if (WORDS.includes(w)) accept(i, w);
+        else { const m = WORDS.filter(x => x.startsWith(w)); if (w && m.length) accept(i, m[0]); }
+      } else if (e.key === 'Backspace' && !inp.value && i > 0) { e.preventDefault(); focusBox(i - 1); }
+    });
+    inp.addEventListener('focus', () => { if (inp.parentElement.dataset.state === 'partial') check(i); else sugg.replaceChildren(); });
+    boxes.push(inp);
+    grid.append(h('label', { class: 'word-cell' }, h('span', { class: 'word-num' }, String(i + 1)), inp));
+  }
+  updateStatus();
+  const wrap = h('div', { class: 'words-input' }, grid, sugg, status,
+    h('div', { class: 'hint' }, 'Scrie primele 4 litere; cuvântul se completează singur. Pentru cuvintele de 3 litere apasă Enter sau atinge sugestia. Poți și lipi toate cele 24 de cuvinte în prima căsuță.'));
+  Object.defineProperty(wrap, 'value', { get: () => boxes.map(b => b.value.trim()).join(' ') });
+  wrap.focus = () => focusBox(0);
+  return wrap;
 }
 function wordsError(e) {
   if (e.message === 'bad_length') return `Trebuie exact 24 de cuvinte (ai scris ${e.count}).`;
@@ -758,10 +834,13 @@ function showRestore() {
       pin.setLen(j.pinLen);
     } catch { file = null; fileLabel.textContent = text.trim() ? 'Nu e un backup Vault valid.' : 'Niciun fișier ales'; }
   };
-  const fileIn = h('input', { type: 'file', accept: '.txt,.json,text/plain,application/json', class: 'hidden', onchange: async e => {
+  const fileIn = h('input', { type: 'file', class: 'hidden', onchange: async e => {
     S.external = false;
     const f = e.target.files[0]; e.target.value = '';
-    if (f) loadText(await f.text());
+    if (!f) return;
+    if (f.size > 10 * 1024 * 1024) { file = null; fileLabel.textContent = 'Fișierul e prea mare pentru a fi un backup Vault.'; return; }
+    try { loadText(await f.text()); }
+    catch { file = null; fileLabel.textContent = 'Fișierul nu a putut fi citit. Încearcă din altă locație (ex. Descărcări).'; }
   } });
   const pasteTa = h('textarea', { id: 'rpaste', class: 'mono backup-text', rows: 3, placeholder: 'sau lipește aici textul backup-ului', spellcheck: 'false' });
   pasteTa.addEventListener('input', () => loadText(pasteTa.value));
@@ -1160,7 +1239,7 @@ async function showSettings() {
   const setPol = k => v => updateMeta(m => { m.policy = { ...DEFAULT_POLICY, ...(m.policy || {}), [k]: v }; });
   const bioSupported = await Bio.supported();
   const hasBio = !!S.record.bio;
-  const fileIn = h('input', { type: 'file', accept: '.txt,.json,text/plain,application/json', class: 'hidden', onchange: e => { S.external = false; handleImportFile(e); } });
+  const fileIn = h('input', { type: 'file', class: 'hidden', onchange: e => { S.external = false; handleImportFile(e); } });
 
   const ov = modal('⚙ Setări', h('div', null,
     h('div', { class: 'section-label' }, 'Backup'),
