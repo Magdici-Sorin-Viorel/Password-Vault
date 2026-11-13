@@ -46,6 +46,10 @@ Nu merge deschizând direct `index.html` din fișiere (`file://`) — criptarea 
 
 **PIN uitat:** cele 24 de cuvinte → PIN nou.
 
+**Import din poze:** ＋ → „Citește conturile dintr-o poză” (sau Setări → Importă parole din poze). Alegi una sau mai multe poze (capturi de ecran, poze cu ecranul, foi tipărite). Textul e citit **pe telefon**, cu motorul Tesseract inclus în aplicație; poza nu e trimisă nicăieri. Apoi vezi poza lângă ce s-a citit și corectezi înainte de salvare. Scrisul de mână se citește slab. La prima folosire se descarcă motorul (~10 MB), apoi merge offline. **După import, șterge pozele din galerie și din Google Photos.**
+
+**Mai multe parole pentru același cont:** dacă la import același cont apare cu parole diferite, toate sunt păstrate pe o singură intrare. Conturile respective sunt marcate în listă cu „⚠ N parole”. Le încerci, apeși „★ Aceasta e cea bună” și le ștergi pe celelalte.
+
 ## Cum sunt protejate datele
 
 | Ce | Cum |
@@ -72,7 +76,8 @@ index.html            pagina + Content-Security-Policy
 app.js                interfața și logica
 crypto.js             criptografia (Web Crypto + Argon2id)
 words.js              lista de 2048 cuvinte BIP39
-vendor/               Argon2id (hash-wasm, licență MIT)
+ocr.js                citirea textului din poze (pe dispozitiv)
+vendor/               Argon2id (hash-wasm, MIT) și Tesseract.js (Apache-2.0) + date de limbă
 style.css             stiluri
 sw.js                 service worker (offline)
 manifest.webmanifest  instalare ca aplicație

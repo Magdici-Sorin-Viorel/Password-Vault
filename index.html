@@ -8,8 +8,9 @@
   • 'wasm-unsafe-eval' only to run the bundled Argon2id WebAssembly
   • no connections to other servers: data cannot be sent anywhere
   • Trusted Types: blocks HTML/script injection into the page
+    (the 'default' policy only allows the bundled OCR worker script, see ocr.js)
 -->
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self'; manifest-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; require-trusted-types-for 'script'; trusted-types vault-sw">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'wasm-unsafe-eval'; style-src 'self'; img-src 'self'; manifest-src 'self'; connect-src 'self'; worker-src 'self'; base-uri 'none'; form-action 'none'; object-src 'none'; require-trusted-types-for 'script'; trusted-types vault-sw default">
 <meta name="referrer" content="no-referrer">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0a0a0c">
@@ -26,6 +27,7 @@
 <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
 <link rel="stylesheet" href="style.css">
 <script src="vendor/argon2.umd.min.js"></script>
+<script src="vendor/tesseract/tesseract.min.js"></script>
 <script type="module" src="app.js"></script>
 </head>
 <body>

@@ -6,8 +6,9 @@
 // ════════════════════════════════════════════════════════════════
 import * as C from './crypto.js';
 import { WORDS } from './words.js';
+import * as OCR from './ocr.js';
 
-const APP_VERSION = '5.4.0';
+const APP_VERSION = '5.5.0';
 
 // Framing is not blocked on purpose: modern browsers partition the storage of a
 // cross-site iframe, so a foreign site embedding the app only sees an empty vault.
@@ -66,12 +67,15 @@ const DEFAULT_META = { fails: 0, lockUntil: 0, destructAt: 0, policy: { ...DEFAU
 const LOCK_AFTER = 3;              // lock the app after 3 wrong PINs
 const LOCK_MS = 5 * 60_000;        // … for 5 minutes
 const PIN_LENGTHS = [4, 6, 8];
+const MAX_ALTS = 50;                // extra passwords kept per account
+const MAX_PHOTOS = 10;              // photos read in one import
 const S = {
   record: null,        // encrypted vault record from IndexedDB
   meta: { ...DEFAULT_META },
   key: null,           // non-extractable CryptoKey (only while unlocked)
   data: null,          // decrypted { entries, settings } (only while unlocked)
   query: '',
+  onlyMulti: false,    // list filter: only accounts that have several passwords
   timers: {},
   clipPending: false,
   external: false,     // a system dialog is open (file picker, fingerprint, share)
@@ -113,7 +117,7 @@ function autoFocus(getEl) {
     if (!a || a === document.body || !document.contains(a)) getEl()?.focus();
   }, 50);
 }
-const closeAllModals = () => document.querySelectorAll('.overlay').forEach(o => o.remove());
+const closeAllModals = () => document.querySelectorAll('.overlay').forEach(o => { o.onX?.(); o.remove(); });
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') { const all = document.querySelectorAll('.overlay'); const top = all[all.length - 1]; top?.onX?.(); top?.remove(); }
 });
@@ -253,6 +257,7 @@ function lock(msg) {
   S.data = null;
   S.holdLock = false;
   S.query = '';
+  S.onlyMulti = false;
   ['idle', 'hide', 'reveal'].forEach(t => clearTimeout(S.timers[t]));
   closeAllModals();
   clearClipboard();
@@ -325,6 +330,12 @@ function cleanEntry(e) {
   };
   if (!out.site && !out.username) return null;
   if (!out.site) out.site = out.username.split('@')[1] || 'Fără nume';
+  // Other passwords found for the same account (the user decides later which one is right).
+  out.alts = [];
+  if (Array.isArray(e.alts)) for (const a of e.alts.slice(0, MAX_ALTS)) {
+    const p = str(typeof a === 'string' ? a : a?.password, 2000);
+    if (p && p !== out.password && !out.alts.some(x => x.password === p)) out.alts.push({ password: p, added: Number(a?.added) || Date.now() });
+  }
   return out;
 }
 
@@ -1048,6 +1059,7 @@ function showApp() {
         h('button', { class: 'btn btn-ghost btn-icon', title: 'Setări', 'aria-label': 'Setări', onclick: showSettings }, '⚙'),
         h('button', { class: 'btn btn-ghost btn-icon', title: 'Blochează', 'aria-label': 'Blochează', onclick: () => lock() }, '🔒'))),
     h('div', { class: 'search-wrap' }, h('span', { class: 'search-icon' }, '🔍'), search),
+    h('div', { id: 'multiFilter' }),
     list);
   renderEntries(list, badge);
 }
@@ -1061,14 +1073,22 @@ function renderEntries(list, badge) {
   const n = S.data.entries.length;
   if (badge) badge.textContent = `${n} ${n === 1 ? 'intrare' : 'intrări'}`;
   const q = S.query.trim().toLowerCase();
+  // Filter chip: accounts that still have several candidate passwords to sort out.
+  const multi = S.data.entries.filter(e => e.alts.length).length;
+  if (!multi) S.onlyMulti = false;
+  document.getElementById('multiFilter')?.replaceChildren(...(multi ? [h('button', {
+    class: 'filter-chip' + (S.onlyMulti ? ' active' : ''), 'aria-pressed': String(S.onlyMulti),
+    onclick: () => { S.onlyMulti = !S.onlyMulti; renderEntries(list, badge); },
+  }, S.onlyMulti ? `✕ Arată toate conturile` : `⚠ ${plural(multi, 'cont are', 'conturi au')} mai multe parole · arată-le`)] : []));
   const shown = S.data.entries
+    .filter(e => !S.onlyMulti || e.alts.length)
     .filter(e => !q || e.site.toLowerCase().includes(q) || e.username.toLowerCase().includes(q) || e.url.toLowerCase().includes(q))
     .sort((a, b) => a.site.localeCompare(b.site, 'ro', { sensitivity: 'base' }));
 
   if (!shown.length) {
     list.replaceChildren(h('div', { class: 'empty' },
       h('div', { class: 'empty-icon' }, q ? '🔍' : '🗝️'),
-      h('p', null, q ? `Niciun rezultat pentru „${S.query}”` : 'Nicio parolă salvată. Apasă ＋ ca să adaugi una.')));
+      h('p', null, q ? `Niciun rezultat pentru „${S.query}”` : 'Nicio parolă salvată. Apasă ＋ ca să adaugi una sau ca să le citești dintr-o poză.')));
     return;
   }
   list.replaceChildren(...shown.map(e => h('div', { class: 'entry-card' },
@@ -1076,7 +1096,8 @@ function renderEntries(list, badge) {
       h('div', { class: 'entry-avatar' }, (e.site.trim()[0] || '?').toUpperCase()),
       h('div', { class: 'entry-info' },
         h('div', { class: 'entry-site' }, e.site),
-        h('div', { class: 'entry-user' }, e.username || '—'))),
+        h('div', { class: 'entry-user' }, e.username || '—'),
+        e.alts.length > 0 && h('div', { class: 'entry-multi' }, `⚠ ${e.alts.length + 1} parole`))),
     h('div', { class: 'entry-actions' },
       e.username && h('button', { class: 'btn btn-ghost btn-icon', title: 'Copiază utilizator', 'aria-label': 'Copiază utilizator', onclick: () => copy(e.username, 'Utilizator copiat') }, '👤'),
       h('button', { class: 'btn btn-ghost btn-icon', title: 'Copiază parola', 'aria-label': 'Copiază parola', onclick: () => copy(e.password, 'Parolă copiată') }, '🔑')))));
@@ -1115,6 +1136,7 @@ function showDetail(id) {
       h('button', { class: 'btn btn-ghost btn-icon', 'aria-label': 'Copiază', onclick: () => copy(e.username, 'Utilizator copiat') }, '📋')),
     row('Parolă', pwVal, toggle,
       h('button', { class: 'btn btn-ghost btn-icon', 'aria-label': 'Copiază', onclick: () => copy(e.password, 'Parolă copiată') }, '📋')),
+    altSection(e, () => { ov.close(); showDetail(id); }),
     e.url && row('Adresă', href
       ? h('a', { class: 'detail-value link', href, target: '_blank', rel: 'noopener noreferrer' }, e.url)
       : h('div', { class: 'detail-value' }, e.url)),
@@ -1124,6 +1146,45 @@ function showDetail(id) {
       h('button', { class: 'btn btn-primary', onclick: () => { ov.close(); showEntryModal(e); } }, '✏️ Editează'),
       h('button', { class: 'btn btn-danger', onclick: () => { ov.close(); confirmDelete(e); } }, '🗑 Șterge')),
     h('button', { class: 'btn btn-ghost mt8', onclick: () => ov.close() }, 'Închide')));
+}
+
+// Other passwords stored for the same account: show, copy, make main, delete, add.
+function altSection(e, reopen) {
+  const save = async () => { e.updated = Date.now(); if (await persist()) { refreshApp(); reopen(); } };
+  const items = e.alts.map((a, i) => {
+    const val = h('div', { class: 'detail-value mono masked' }, '••••••••••••');
+    let shown = false;
+    const eye = h('button', { class: 'btn btn-ghost btn-icon', 'aria-label': 'Arată parola', onclick: () => {
+      shown = !shown; val.textContent = shown ? a.password : '••••••••••••'; val.classList.toggle('masked', !shown); eye.textContent = shown ? '🙈' : '👁';
+    } }, '👁');
+    return h('div', { class: 'alt-row' },
+      h('div', { class: 'detail-line' }, val, h('div', { class: 'detail-actions' }, eye,
+        h('button', { class: 'btn btn-ghost btn-icon', 'aria-label': 'Copiază', onclick: () => copy(a.password, 'Parolă copiată') }, '📋'))),
+      h('div', { class: 'alt-actions' },
+        h('button', { class: 'btn btn-ghost btn-sm', onclick: () => {
+          // Swap: this one becomes the main password, the old main one stays in the list.
+          const old = e.password; e.password = a.password; e.alts[i] = { password: old, added: Date.now() };
+          save(); toast('✓ Parola principală a fost schimbată');
+        } }, '★ Aceasta e cea bună'),
+        h('button', { class: 'btn btn-ghost btn-sm', onclick: () => { e.alts.splice(i, 1); save(); } }, '🗑 Șterge')));
+  });
+  const addBtn = h('button', { class: 'btn btn-ghost btn-sm mt8', onclick: () => {
+    const pw = pwInput({ placeholder: 'Altă parolă pentru acest cont' });
+    const m = modal('＋ Altă parolă', h('form', { onsubmit: ev => {
+      ev.preventDefault();
+      const p = pw.input.value;
+      if (!p) return;
+      if (p === e.password || e.alts.some(a => a.password === p)) return toast('Această parolă există deja la acest cont', 'err');
+      if (e.alts.length >= MAX_ALTS) return toast('Prea multe parole la acest cont', 'err');
+      e.alts.push({ password: p, added: Date.now() });
+      m.close(); save();
+    } }, field(null, pw), h('button', { class: 'btn btn-primary', type: 'submit' }, 'Adaugă')));
+  } }, '＋ Adaugă altă parolă');
+  return h('div', { class: 'detail-row' },
+    h('div', { class: 'detail-label' }, e.alts.length ? `Alte parole pentru acest cont (${e.alts.length})` : 'Alte parole'),
+    e.alts.length > 0 && h('div', { class: 'hint mb12' }, 'Încearcă-le pe rând. Când o găsești pe cea bună, apasă „★ Aceasta e cea bună”, apoi șterge-le pe celelalte.'),
+    items, addBtn,
+    e.alts.length > 1 && h('button', { class: 'btn btn-ghost btn-sm mt8', onclick: () => { e.alts = []; save(); toast('Parolele în plus au fost șterse'); } }, '🗑 Șterge toate parolele în plus'));
 }
 
 // ── Add / edit ──────────────────────────────────────────────
@@ -1152,15 +1213,19 @@ function showEntryModal(entry) {
     const vals = { site: s, username: u, password: p, url: url.value.trim(), notes: notes.value, updated: now };
     if (isEdit) {
       const i = S.data.entries.findIndex(x => x.id === entry.id);
-      if (i !== -1) S.data.entries[i] = { ...S.data.entries[i], ...vals };
+      if (i !== -1) {
+        const cur = S.data.entries[i];
+        S.data.entries[i] = { ...cur, ...vals, alts: cur.alts.filter(a => a.password !== p) };
+      }
     } else {
-      S.data.entries.push({ id: crypto.randomUUID(), created: now, ...vals });
+      S.data.entries.push({ id: crypto.randomUUID(), created: now, ...vals, alts: [] });
     }
     if (!(await persist())) return;
     ov.close();
     refreshApp();
     toast(isEdit ? '✓ Actualizat' : '✓ Salvat');
   } },
+    !isEdit && h('button', { class: 'btn btn-ghost mb12', type: 'button', onclick: () => { ov.close(); startPhotoImport(); } }, '📷 Citește conturile dintr-o poză'),
     field('Site / aplicație *', site),
     field('Utilizator / email', user),
     field('Parolă *', pw), meter,
@@ -1263,6 +1328,7 @@ async function showSettings() {
         : h('button', { class: 'btn btn-ghost btn-sm', disabled: !bioSupported, onclick: () => { ov.close(); enableBio(); } }, 'Activează')),
     h('button', { class: 'btn btn-ghost mt8', onclick: () => { ov.close(); showChangePin(); } }, '🔢 Schimbă PIN-ul'),
     h('button', { class: 'btn btn-ghost mt8', onclick: () => { ov.close(); newWords(); } }, '🗝 Cheie nouă (alte 24 de cuvinte)'),
+    h('button', { class: 'btn btn-ghost mt8', onclick: () => { ov.close(); startPhotoImport(); } }, '📷 Importă parole din poze'),
     h('button', { class: 'btn btn-ghost mt8', onclick: () => { S.external = 'picker'; fileIn.click(); } }, '📥 Importă parole (.txt sau backup)'),
     fileIn,
 
@@ -1414,7 +1480,7 @@ async function handleImportFile(evt) {
     return;
   }
   if (parsed) return toast('Format necunoscut', 'err');
-  const found = parseTxtPasswords(text).map(cleanEntry).filter(Boolean);
+  const found = parseCredentials(text).map(cleanEntry).filter(Boolean);
   if (!found.length) return toast('Nu am găsit perechi utilizator/parolă în fișier', 'err', 3000);
   showImportPreview(found, true);
 }
@@ -1436,17 +1502,11 @@ function showImportPreview(found, fromTxt) {
       h('button', { class: 'btn btn-ghost btn-sm', onclick: () => checks.forEach(c => { c.checked = false; }) }, 'Niciuna')),
     h('div', { class: 'row mt12' },
       h('button', { class: 'btn btn-primary', onclick: async () => {
-        const key = x => `${x.site.toLowerCase()}|${x.username.toLowerCase()}|${x.password}`;
-        const existing = new Set(S.data.entries.map(key));
-        let added = 0;
-        found.forEach((it, i) => {
-          if (!checks[i].checked || existing.has(key(it))) return;
-          S.data.entries.push({ ...it, id: crypto.randomUUID() });
-          existing.add(key(it)); added++;
-        });
+        const st = { new: 0, merged: 0, same: 0 };
+        found.forEach((it, i) => { if (checks[i].checked) st[mergeEntry(it)]++; });
         if (!(await persist())) return;
         ov.close(); refreshApp();
-        toast(`✓ ${added} ${added === 1 ? 'intrare importată' : 'intrări importate'}`);
+        toast('✓ ' + importSummary(st), 'ok', 3500);
         if (fromTxt) modal('⚠️ Important', h('div', null,
           h('p', { class: 'muted mb12' }, 'Fișierul .txt conține parolele NECRIPTATE. Șterge-l acum de pe telefon (și din coșul de gunoi / cloud), altfel oricine îl găsește îți vede parolele.'),
           h('button', { class: 'btn btn-primary', onclick: () => closeAllModals() }, 'Am înțeles')));
@@ -1454,36 +1514,248 @@ function showImportPreview(found, fromTxt) {
       h('button', { class: 'btn btn-ghost', onclick: () => ov.close() }, 'Anulează'))));
 }
 
-// .txt parser: email:pass, email|pass, email pass, labelled blocks, URL + email + password lines
-function parseTxtPasswords(text) {
-  const results = [], seen = new Set();
-  const lines = text.split(/\r?\n/);
-  const emailRe = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
-  const siteRe = /^(?:site|website|url|platform|platforma|app|aplicatie|aplicație|account|cont|service)\s*[:=]\s*(.+)/i;
-  const userRe = /^(?:email|e-mail|user|username|utilizator|login|mail)\s*[:=]\s*(.+)/i;
-  const passRe = /^(?:password|parola|parolă|pass|pwd|pw|key|secret)\s*[:=]\s*(.+)/i;
-  let buf = { site: '', username: '', password: '' };
-  const push = (site, username, password) => {
-    const k = username + '|' + password;
-    if (!seen.has(k)) { results.push({ site, username, password }); seen.add(k); }
+// Add an imported account. If the same site + user already exists, its extra passwords
+// are kept on that entry (`alts`) instead of creating a duplicate entry.
+function mergeEntry(it) {
+  const k = x => x.site.toLowerCase() + '|' + x.username.toLowerCase();
+  const ex = S.data.entries.find(x => k(x) === k(it));
+  if (!ex) { S.data.entries.push({ ...it, id: crypto.randomUUID() }); return 'new'; }
+  const before = ex.alts.length;
+  for (const p of [it.password, ...it.alts.map(a => a.password)]) {
+    if (p && p !== ex.password && !ex.alts.some(a => a.password === p) && ex.alts.length < MAX_ALTS) ex.alts.push({ password: p, added: Date.now() });
+  }
+  if (ex.alts.length === before) return 'same';
+  ex.updated = Date.now();
+  return 'merged';
+}
+const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`;
+function importSummary(st) {
+  const parts = [];
+  if (st.new) parts.push(plural(st.new, 'cont nou', 'conturi noi'));
+  if (st.merged) parts.push(plural(st.merged, 'cont completat cu parole în plus', 'conturi completate cu parole în plus'));
+  if (st.same) parts.push(plural(st.same, 'existent deja', 'existente deja'));
+  return parts.join(' · ') || 'nimic de importat';
+}
+
+// ── Import from photos (on-device OCR) ─────────────────────────
+const OCR_STATUS = {
+  'loading tesseract core': 'Se încarcă motorul de citire…',
+  'initializing tesseract': 'Se pornește motorul…',
+  'loading language traineddata': 'Se încarcă datele de limbă…',
+  'initializing api': 'Se pregătește…',
+  'recognizing text': 'Se citește textul din poză…',
+};
+function ocrErrorText(e) {
+  switch (e?.message) {
+    case 'bad_image': return 'Poza nu a putut fi deschisă. Folosește o poză JPG sau PNG.';
+    case 'ocr_unavailable':
+    case 'ocr_load_failed': return 'Motorul de citire nu s-a putut încărca. La prima folosire e nevoie de internet (~10 MB).';
+    case 'ocr_timeout': return 'Citirea a durat prea mult. Încearcă o poză mai mică sau mai clară.';
+    default: return 'Citirea pozei a eșuat: ' + (e?.message || e);
+  }
+}
+// Characters OCR engines commonly confuse; shown as a hint under each password.
+function lookalikes(pw) {
+  const out = [];
+  if (/[0OoQD]/.test(pw)) out.push('0 / O');
+  if (/[1lI|!]/.test(pw)) out.push('1 / l / I');
+  if (/[5Ss]/.test(pw)) out.push('5 / S');
+  if (/[8B]/.test(pw)) out.push('8 / B');
+  if (/[2Zz]/.test(pw)) out.push('2 / Z');
+  return out;
+}
+
+function startPhotoImport() {
+  const input = h('input', { type: 'file', accept: 'image/*', multiple: true, class: 'hidden' });
+  const done = () => { S.external = false; input.remove(); };
+  input.addEventListener('change', () => { const files = [...input.files].slice(0, MAX_PHOTOS); done(); if (files.length) runPhotoImport(files); });
+  input.addEventListener('cancel', done);
+  document.body.append(input);
+  S.external = 'picker';
+  input.click();
+}
+
+async function runPhotoImport(files) {
+  const stats = { new: 0, merged: 0, same: 0 };
+  let cancelled = false;
+  try {
+    for (let i = 0; i < files.length && !cancelled; i++) {
+      const label = files.length > 1 ? `📷 Poza ${i + 1} din ${files.length}` : '📷 Citire poză';
+      const status = h('div', { class: 'ocr-status' }, 'Se pregătește poza…');
+      const bar = h('div', { class: 'ocr-bar-fill' });
+      const prog = modal(label, h('div', null,
+        status, h('div', { class: 'ocr-bar' }, bar),
+        h('div', { class: 'hint' }, 'Poza este citită pe telefon și nu e trimisă nicăieri. Poate dura până la un minut.')));
+      prog.onX = () => { cancelled = true; };
+      let res = null;
+      S.holdLock = true; clearTimeout(S.timers.idle); // reading takes a while without any touch
+      try {
+        res = await OCR.recognize(files[i], m => {
+          status.textContent = OCR_STATUS[m.status] || 'Se lucrează…';
+          bar.style.width = (m.status === 'recognizing text' ? Math.round(m.progress * 100) : 8) + '%';
+        });
+      } catch (e) {
+        console.error(e);
+        toast(ocrErrorText(e), 'err', 6000);
+        if (e?.message !== 'bad_image') cancelled = true; // engine problem: stop the batch
+      } finally { S.holdLock = false; resetIdle(); prog.onX = null; prog.close(); }
+      if (!S.key) return;          // the vault was locked meanwhile
+      if (!res || cancelled) continue;
+      if (await reviewPhoto(res, i, files.length, stats) === 'stop') cancelled = true;
+    }
+  } finally { OCR.terminate(); }
+  if (!S.key) return;
+  refreshApp();
+  if (stats.new + stats.merged === 0) return;
+  modal('✓ Import din poze', h('div', null,
+    h('div', { class: 'info-box ok' }, 'Salvat: ' + importSummary(stats) + '.'),
+    h('div', { class: 'info-box warn' }, h('strong', null, 'Șterge acum pozele. '),
+      'Ele conțin parolele NECRIPTATE. Șterge-le din galerie, din coșul de gunoi al galeriei și din Google Photos, dacă se sincronizează acolo.'),
+    stats.merged > 0 && h('div', { class: 'info-box' }, 'Conturile cu mai multe parole sunt marcate în listă. Deschide-le, încearcă parolele și păstreaz-o pe cea bună.'),
+    h('button', { class: 'btn btn-primary', onclick: () => closeAllModals() }, 'Am înțeles')));
+}
+
+// One editable account card in the review screen.
+function reviewRow(data, onRemove) {
+  const include = h('input', { type: 'checkbox', checked: true, 'aria-label': 'Salvează acest cont' });
+  const site = textInput({ placeholder: 'Site / aplicație', value: data.site || '', maxlength: 200 });
+  const user = textInput({ placeholder: 'Utilizator / email', value: data.username || '', maxlength: 300, class: 'mono' });
+  const pwList = h('div', { class: 'review-pws' });
+  const pws = [];
+  const addPw = (value, focus) => {
+    const input = textInput({ placeholder: pws.length ? 'Altă parolă pentru același cont' : 'Parolă', value: value || '', maxlength: 2000, class: 'mono' });
+    const hint = h('div', { class: 'review-hint' });
+    const upd = () => { const l = lookalikes(input.value); hint.textContent = l.length ? 'Verifică după poză: ' + l.join(', ') : ''; };
+    input.addEventListener('input', upd); upd();
+    const item = { input };
+    const line = h('div', { class: 'review-pw' },
+      h('div', { class: 'detail-line' }, input,
+        pws.length > 0 && h('button', { type: 'button', class: 'btn btn-ghost btn-icon', 'aria-label': 'Șterge parola', onclick: () => { pws.splice(pws.indexOf(item), 1); line.remove(); } }, '✕')),
+      hint);
+    pws.push(item); pwList.append(line);
+    if (focus) input.focus();
   };
-  const flush = () => { if (buf.username && buf.password) push(buf.site, buf.username, buf.password); buf = { site: '', username: '', password: '' }; };
+  [data.password, ...(data.alts || [])].forEach(p => addPw(typeof p === 'string' ? p : p?.password));
+  if (!pws.length) addPw('');
+  const el = h('div', { class: 'review-row' },
+    h('div', { class: 'review-head' },
+      h('label', { class: 'check' }, include, ' Salvează'),
+      h('button', { type: 'button', class: 'btn btn-ghost btn-sm review-del', onclick: () => onRemove(row) }, '🗑 Elimină')),
+    site, user,
+    h('div', { class: 'review-label' }, 'Parolă (dacă sunt mai multe, prima e cea principală)'),
+    pwList,
+    h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => addPw('', true) }, '＋ Altă parolă pentru acest cont'));
+  include.addEventListener('change', () => el.classList.toggle('off', !include.checked));
+  const row = {
+    el,
+    get included() { return include.checked; },
+    get value() {
+      const list = pws.map(p => p.input.value).filter(Boolean);
+      return { site: site.value.trim(), username: user.value.trim(), password: list[0] || '', alts: list.slice(1) };
+    },
+  };
+  return row;
+}
+
+// Show the photo next to what was read; the user corrects and confirms. Resolves 'next' or 'stop'.
+function reviewPhoto(res, index, total, stats) {
+  return new Promise(resolve => {
+    const found = parseCredentials(res.text);
+    const rows = [];
+    const list = h('div', { class: 'review-list' });
+    const count = h('div', { class: 'info-box' });
+    const updCount = () => {
+      count.replaceChildren(found.length
+        ? `Am găsit ${plural(found.length, 'cont', 'conturi')}. Compară cu poza și corectează ce e greșit înainte să salvezi.`
+        : 'Nu am recunoscut conturi în această poză. Le poți scrie tu mai jos, uitându-te la poză.');
+    };
+    const remove = row => { rows.splice(rows.indexOf(row), 1); row.el.remove(); };
+    const add = (data, focus) => { const r = reviewRow(data, remove); rows.push(r); list.append(r.el); if (focus) r.el.scrollIntoView({ block: 'center', behavior: 'smooth' }); };
+    (found.length ? found : [{}]).forEach(d => add(d));
+    updCount();
+
+    res.view.classList.add('review-img');
+    const frame = h('div', { class: 'review-frame' }, res.view);
+    const zoomBtn = h('button', { type: 'button', class: 'btn btn-ghost btn-sm', onclick: () => {
+      const z = frame.classList.toggle('zoom');
+      zoomBtn.textContent = z ? '🔍 Micșorează poza' : '🔍 Mărește poza';
+    } }, '🔍 Mărește poza');
+    const raw = h('textarea', { class: 'mono backup-text', rows: 5, readonly: true });
+    raw.value = res.text.trim();
+    const last = index === total - 1;
+    const saveBtn = h('button', { class: 'btn btn-primary', type: 'button', onclick: async () => {
+      const chosen = rows.filter(r => r.included).map(r => r.value);
+      if (chosen.some(v => !v.password || (!v.site && !v.username))) return toast('Fiecare cont bifat are nevoie de o parolă și de un site sau utilizator. Completează sau debifează.', 'err', 4500);
+      const items = chosen.map(cleanEntry).filter(Boolean);
+      const local = { new: 0, merged: 0, same: 0 };
+      items.forEach(it => { local[mergeEntry(it)]++; });
+      if (items.length && !(await persist())) return;
+      Object.keys(local).forEach(k => { stats[k] += local[k]; });
+      finish('next');
+      if (items.length) toast('✓ ' + importSummary(local), 'ok', 3000);
+    } }, last ? '💾 Salvează' : '💾 Salvează și treci la poza următoare');
+    let settled = false;
+    const finish = out => { if (settled) return; settled = true; ov.onX = null; ov.close(); res.view.width = res.view.height = 0; resolve(out); };
+    const ov = modal(total > 1 ? `📷 Verificare · poza ${index + 1} din ${total}` : '📷 Verificare', h('div', null,
+      frame, h('div', { class: 'mt8 mb12' }, zoomBtn),
+      res.confidence < 60 && h('div', { class: 'info-box warn' }, h('strong', null, 'Poză greu de citit. '),
+        'Textul recunoscut are probabil multe greșeli (scris de mână, poză neclară sau înclinată). Verifică fiecare caracter.'),
+      count, list,
+      h('button', { type: 'button', class: 'btn btn-ghost mt8', onclick: () => add({}, true) }, '＋ Adaugă un cont'),
+      h('details', { class: 'review-raw' }, h('summary', null, 'Tot textul citit din poză'), raw),
+      h('div', { class: 'mt12' }, saveBtn),
+      !last && h('button', { class: 'btn btn-ghost mt8', type: 'button', onclick: () => finish('next') }, 'Sari peste această poză'),
+      h('button', { class: 'btn btn-ghost mt8', type: 'button', onclick: () => finish('stop') }, total > 1 ? 'Oprește importul' : 'Anulează')));
+    ov.classList.add('wide');
+    ov.onX = () => { if (!settled) { settled = true; resolve('stop'); } };
+  });
+}
+
+// Text parser used for .txt files and for text read from photos. Understands:
+// labelled blocks (site / user / parola, several passwords per block), "email:pass",
+// "email | pass", "email pass", URL lines, and "name / email / password" on separate lines.
+function parseCredentials(text) {
+  const results = [];
+  const lines = text.replace(/[ \t]*@[ \t]*/g, '@').split(/\r?\n/);
+  const emailRe = /[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}/;
+  const siteRe = /^(?:site|website|web|url|link|platform[ăa]?|app|aplica[țt]ie|account|cont|service|serviciu)\s*[:=]\s*(.+)/i;
+  const userRe = /^(?:e-?mail|user(?:\s*name)?|utilizator|nume(?:\s+(?:de\s+)?utilizator)?|login|mail|id)\s*[:=]\s*(.+)/i;
+  const passRe = /^(?:(?:old|new|vechi|veche|nou[ăa]?)\s+)?(?:password|parol[ăa]|pass|pwd|pw|key|secret|pin|cod)(?:\s*(?:veche|vechi|nou[ăa]?|old|new|\d+))?\s*[:=]\s*(.+)/i;
+  let buf, plain;
+  const reset = () => { buf = { site: '', username: '', passwords: [] }; plain = ''; };
+  reset();
+  const push = (site, username, passwords) => {
+    site = site || plain || (username.includes('@') ? username.split('@')[1] : '') || 'Import';
+    const ex = results.find(r => r.site.toLowerCase() === site.toLowerCase() && r.username.toLowerCase() === username.toLowerCase());
+    const target = ex || { site, username, passwords: [] };
+    passwords.forEach(p => { if (p && !target.passwords.includes(p)) target.passwords.push(p); });
+    if (!ex) results.push(target);
+  };
+  const flush = () => { if (buf.passwords.length && (buf.username || buf.site)) push(buf.site, buf.username, buf.passwords); reset(); };
 
   for (let i = 0; i < lines.length; i++) {
     const line = lines[i].trim();
-    if (!line) { flush(); continue; }
+    // Blank lines are not trusted as separators: text read from photos gains and loses
+    // them at random. A new account starts at the next "site" or "user" label instead.
+    if (!line) { plain = ''; continue; }
     let m;
-    if ((m = line.match(siteRe))) { if (buf.username && buf.password) flush(); buf.site = m[1].trim(); continue; }
-    if ((m = line.match(userRe))) { buf.username = m[1].trim(); continue; }
-    if ((m = line.match(passRe))) { buf.password = m[1].trim(); continue; }
-
+    if ((m = line.match(passRe))) { buf.passwords.push(m[1].trim()); continue; }
+    if ((m = line.match(userRe))) { if (buf.username && buf.passwords.length) flush(); buf.username = m[1].trim(); continue; }
+    if ((m = line.match(siteRe))) {
+      if (buf.passwords.length && (buf.username || buf.site)) flush();
+      const v = m[1].trim(), em = v.match(emailRe);
+      if (em && !buf.username) buf.username = em[0]; else buf.site = v; // "cont: me@mail.com" is a user, not a site
+      continue;
+    }
     const sep = line.match(/^(.+?)\s*[:|;]\s*(\S+)\s*$/) || line.match(/^([a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,})\s+(\S+)$/);
     if (sep) {
       const em = sep[1].match(emailRe);
       if (em && sep[2].length >= 3) {
         const u = sep[1].match(/https?:\/\/([^\/\s]+)/);
-        push(buf.site || (u ? u[1] : ''), em[0], sep[2]);
-        buf = { site: '', username: '', password: '' };
+        const site = (u ? u[1] : '') || (buf.passwords.length ? '' : buf.site);
+        flush(); // a labelled account collected so far ends here
+        push(site, em[0], [sep[2]]);
+        reset();
         continue;
       }
     }
@@ -1491,15 +1763,19 @@ function parseTxtPasswords(text) {
     const em = line.match(emailRe);
     if (em && line === em[0]) {
       const next = (lines[i + 1] || '').trim();
-      if (next && !emailRe.test(next) && !/[:|]/.test(next) && next.length >= 3) {
-        push(buf.site, em[0], next);
-        buf = { site: '', username: '', password: '' };
-        i++;
-      } else buf.username = em[0];
+      if (next && !emailRe.test(next) && !/[:|]/.test(next) && !/\s/.test(next) && next.length >= 3) {
+        const site = buf.passwords.length ? '' : buf.site, heading = plain;
+        flush(); plain = heading;
+        push(site, em[0], [next]);
+        reset(); i++;
+      } else { if (buf.username && buf.passwords.length) flush(); buf.username = em[0]; }
+      continue;
     }
+    // A short free line is remembered as a possible name for the account that follows.
+    if (line.length <= 40 && line.split(/\s+/).length <= 4 && !buf.username) plain = line;
   }
   flush();
-  return results.map(r => ({ ...r, site: r.site || r.username.split('@')[1] || 'Import' }));
+  return results.map(r => ({ site: r.site, username: r.username, password: r.passwords[0], alts: r.passwords.slice(1) }));
 }
 
 // ── Install button ─────────────────────────────────────────────
